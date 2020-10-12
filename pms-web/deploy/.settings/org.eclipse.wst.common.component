@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="deploy-1.0">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/ear-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/application" tag="defaultRootSource"/>
+        <dependent-module archiveName="jetspeed.war" deploy-path="/" handle="module:/resource/pms-portal/pms-portal">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pms-portlet.war" deploy-path="/" handle="module:/resource/pms-portlet/pms-portlet">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="portlet-api_2.1.0_spec-1.0.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/org/apache/portals/portlet-api_2.1.0_spec/1.0/portlet-api_2.1.0_spec-1.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ccpp-1.0.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/javax/ccpp/ccpp/1.0/ccpp-1.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jetspeed-api-2.3.1.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/org/apache/portals/jetspeed-2/jetspeed-api/2.3.1/jetspeed-api-2.3.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jetspeed-commons-2.3.1.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/org/apache/portals/jetspeed-2/jetspeed-commons/2.3.1/jetspeed-commons-2.3.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pluto-container-api-2.0.3.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/org/apache/portals/pluto/pluto-container-api/2.0.3/pluto-container-api-2.0.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pluto-taglib-2.0.3.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/org/apache/portals/pluto/pluto-taglib/2.0.3/pluto-taglib-2.0.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="portals-bridges-common-2.1.jar" deploy-path="/lib/" handle="module:/classpath/var/M2_REPO/org/apache/portals/bridges/portals-bridges-common/2.1/portals-bridges-common-2.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

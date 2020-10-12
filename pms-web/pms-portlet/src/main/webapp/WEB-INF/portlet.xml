@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<portlet-app id="pms-portlet"
+	xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
+	<portlet id="PageCustomizer">
+	  	<description>Provides users with the ability customize pages</description>
+        <description xml:lang="zh">提供给用户定制Page的能力</description>
+        <portlet-name>PageCustomizer</portlet-name>
+        <display-name>Page Customizer</display-name>
+        <display-name xml:lang="zh">页面定制</display-name>
+		<portlet-class>com.pms.jetspeed.PageCustomizer</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>/WEB-INF/jetspeed/page-customizer.vm</value>
+		</init-param>
+        <init-param>
+            <name>dojo.requires.core</name>
+            <value>
+                dojo.lang.*;dojo.event.*;dojo.io.*;dojo.widget.*;dojo.widget.Tree;dojo.widget.Button;dojo.widget.Checkbox;dojo.widget.Dialog;dojo.widget.TabContainer;dojo.widget.ContentPane;dojo.widget.LayoutContainer
+            </value>
+        </init-param>
+        <init-param>
+            <name>dojo.requires.modules</name>
+            <value>jetspeed.common;jetspeed.selector</value>
+        </init-param>
+        <init-param>
+        	<name>show.in.portlet.list</name>
+        	<value>false</value>
+        </init-param>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>zh</supported-locale>
+		<portlet-info>
+            <title>页面定制</title>
+            <short-title>页面定制</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>	
+    </portlet>
+    <portlet id="PortletCustomizer">
+	  	<description>Provides users with the ability customize portlets</description>
+        <description xml:lang="zh">提供给用户定制Portlets的能力</description>
+        <portlet-name>PortletCustomizer</portlet-name>
+        <display-name>Portlet Customizer</display-name>
+        <display-name xml:lang="zh">Portlet定制</display-name>
+		<portlet-class>com.pms.jetspeed.PortletCustomizer</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>/WEB-INF/jetspeed/portlet-customizer.vm</value>
+		</init-param>
+        <init-param>
+            <name>dojo.requires.core</name>
+            <value>
+                dojo.lang.*;dojo.event.*;dojo.io.*;dojo.widget.*;dojo.widget.Tree;dojo.widget.Button;dojo.widget.Checkbox;dojo.widget.Dialog;dojo.widget.TabContainer;dojo.widget.ContentPane;dojo.widget.LayoutContainer
+            </value>
+        </init-param>
+        <init-param>
+            <name>dojo.requires.modules</name>
+            <value>jetspeed.common;jetspeed.selector</value>
+        </init-param>
+        <init-param>
+        	<name>show.in.portlet.list</name>
+        	<value>false</value>
+        </init-param>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>zh</supported-locale>
+		<portlet-info>
+            <title>Portlets 定制</title>
+            <short-title>Portlets 定制</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>	
+    </portlet>
+	<portlet id="PorletsManagement">
+		<description>Provides users with the ability customize portlets</description>
+		<description xml:lang="zh">提供给用户定制Portlets的能力</description>
+		<portlet-name>PorletsManagement</portlet-name>
+		<display-name>Portlets Management</display-name>
+		<display-name xml:lang="zh">Portlets管理</display-name>
+		<portlet-class>com.pms.jetspeed.CategoryPortletSelector</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>/WEB-INF/jetspeed/category-portlet-selector.vm</value>
+		</init-param>
+        <init-param>
+            <name>dojo.requires.core</name>
+            <value>
+                dojo.lang.*;dojo.event.*;dojo.io.*;dojo.widget.*;dojo.widget.Tree;dojo.widget.Button;dojo.widget.Checkbox;dojo.widget.Dialog;dojo.widget.TabContainer;dojo.widget.ContentPane;dojo.widget.LayoutContainer
+            </value>
+        </init-param>
+        <init-param>
+            <name>dojo.requires.modules</name>
+            <value>jetspeed.common;jetspeed.selector</value>
+        </init-param>
+        <init-param>
+        	<name>show.in.portlet.list</name>
+        	<value>false</value>
+        </init-param>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>zh</supported-locale>
+		<portlet-info>
+			<title>Portlets 管理</title>
+			<short-title>Portlets 管理</short-title>
+			<keywords>PMS</keywords>
+		</portlet-info>
+	</portlet>
+    <portlet id="Setup">
+        <description>Setup navigation</description>
+        <description xml:lang="zh">设置菜单导航</description>
+        <portlet-name>Setup</portlet-name>
+        <display-name>Setup</display-name>
+        <display-name xml:lang="zh">菜单栏</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/pages/admin/setup.jsp</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>菜单栏</title>
+            <short-title>菜单栏</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet id="VIP Management">
+        <description>VIP Management navigation</description>
+        <description xml:lang="zh">会员管理</description>
+        <portlet-name>VIP Management</portlet-name>
+        <display-name>VIP Management</display-name>
+        <display-name xml:lang="zh">会员管理</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/actions/vip/doList</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>会员管理</title>
+            <short-title>会员管理</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet id="Administration">
+        <description>Administration window</description>
+        <description xml:lang="zh">管理窗口</description>
+        <portlet-name>Administration</portlet-name>
+        <display-name>Administration</display-name>
+        <display-name xml:lang="zh">管理</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/pages/admin/administration.jsp</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>管理</title>
+            <short-title>管理</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet id="carManagement">
+        <description>Car Information Management</description>
+        <description xml:lang="zh">车辆信息管理</description>
+        <portlet-name>Car Management</portlet-name>
+        <display-name>Car Management</display-name>
+        <display-name xml:lang="zh">车辆信息管理</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/actions/car/doList</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>车辆信息管理</title>
+            <short-title>车辆信息管理</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet id="workOrderManagement">
+        <description>Business Work Order Management</description>
+        <description xml:lang="zh">业务订单管理</description>
+        <portlet-name>Business Work Order Management</portlet-name>
+        <display-name>Business Work Order Management</display-name>
+        <display-name xml:lang="zh">业务订单管理</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/actions/workOrder/doList</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>业务订单管理</title>
+            <short-title>业务订单管理</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet id="materialRepository">
+        <description>Material Repository Management</description>
+        <description xml:lang="zh">维修材料仓库</description>
+        <portlet-name>Material Repository Management</portlet-name>
+        <display-name>Material Repository Management</display-name>
+        <display-name xml:lang="zh">维修材料仓库</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/actions/materialRepository/doList</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>维修材料仓库</title>
+            <short-title>维修材料仓库</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+    <portlet id="workflowTasks">
+        <description>Workflow Tasks</description>
+        <description xml:lang="zh">工作流任务</description>
+        <portlet-name>Workflow Tasks</portlet-name>
+        <display-name>Workflow Tasks</display-name>
+        <display-name xml:lang="zh">工作流任务</display-name>
+        <portlet-class>com.pms.jetspeed.PmsSpringMvcPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>/pms-portlet/actions/tasks/viewTasks</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>zh</supported-locale>
+        <portlet-info>
+            <title>工作流任务</title>
+            <short-title>工作流任务</short-title>
+            <keywords>PMS</keywords>
+        </portlet-info>
+    </portlet>
+</portlet-app>

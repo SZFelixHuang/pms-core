@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+
+	<camel:routeContext id="Routing-brand-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:deleteBrandBasic"/>
+			<camel:bean ref="brandBasicDAO" method="searchByPK(${body[0]})"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body.agency}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="fileKey">
+				<camel:simple>${body.logo}</camel:simple>
+			</camel:setHeader>
+			<camel:setBody>
+				<camel:javaScript>[request.body.agency,request.body.id,null,request.body.level]</camel:javaScript>
+			</camel:setBody>
+			<camel:multicast parallelProcessing="true" stopOnException="true">
+				<camel:filter>
+					<camel:simple>${header.fileKey} != null</camel:simple>
+					<camel:process ref="deleteDocumentationRequestProcessor" />
+				</camel:filter>
+				<camel:bean ref="brandBasicDAO" method="removeByPK(${body[1]})"/>
+				<camel:to uri="direct:deleteServiceMapping"/>
+			</camel:multicast>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteBrandDetailDocumentations"/>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.pictures} != null</camel:simple>
+					<camel:setHeader headerName="fileKeys">
+						<camel:javaScript>request.body.pictures.split('\\|')</camel:javaScript>
+					</camel:setHeader>
+				 	<camel:setHeader headerName="loopSize">
+			                <camel:simple>${header.fileKeys.length}</camel:simple>
+	            	</camel:setHeader>
+					<camel:loop>
+					  	<camel:header>loopSize</camel:header>
+		                <camel:setHeader headerName="fileKey">
+		                    <camel:simple>${header.fileKeys[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+		                </camel:setHeader>
+						<camel:process ref="deleteDocumentationRequestProcessor" />
+					</camel:loop>		
+				</camel:when>
+			</camel:choice>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteDocumentsWithBrandDetail"/>
+			<camel:bean ref="brandDetailDAO" method="searchByPK(${body[1]})"/>
+			<camel:to uri="direct:deleteBrandDetailDocumentations"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteServiceMaterialWithBrandDetail"/>
+			<camel:setBody>
+				<camel:javaScript>[request.body[0],request.body[1],null,5]</camel:javaScript>
+			</camel:setBody>
+			<camel:to uri="direct:deleteServiceMapping"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteBrandDetailWithReturn" />
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+           <camel:setHeader headerName="brandBasicId">
+                <camel:simple>${body[1]}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader headerName="brandDetailId">
+            	<camel:simple>${body[2]}</camel:simple>
+            </camel:setHeader>
+			<camel:setBody>
+				<camel:javaScript>[request.headers.get('agency'),request.headers.get('brandDetailId')]</camel:javaScript>
+			</camel:setBody>
+			<camel:multicast parallelProcessing="true" stopOnException="true">
+				<camel:to uri="direct:deleteDocumentsWithBrandDetail"/>
+				<camel:to uri="direct:deleteServiceMaterialWithBrandDetail"/>
+			</camel:multicast>
+			<camel:bean ref="brandDetailDAO" method="removeByPK(${header.brandDetailId})"/>
+			<camel:bean ref="brandDetailDAO" method="getBrandDetailsByBrandBasicId(${header.agency},${header.brandBasicId})"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:batchDeleteBrandDetailWithReturn"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+           <camel:setHeader headerName="brandBasicId">
+                <camel:simple>${body[1]}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader headerName="brandDetailIds">
+            	<camel:simple>${body[2]}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader headerName="loopSize">
+                <camel:simple>${header.brandDetailIds.length}</camel:simple>
+            </camel:setHeader>
+			<camel:loop>
+			  	<camel:header>loopSize</camel:header>
+                <camel:setHeader headerName="currentBrandDetailId">
+                    <camel:simple>${header.brandDetailIds[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+                </camel:setHeader>
+            	<camel:setBody>
+					<camel:javaScript>[request.headers.get('agency'),request.headers.get('currentBrandDetailId')]</camel:javaScript>
+				</camel:setBody>
+              	<camel:multicast parallelProcessing="true" stopOnException="true">
+					<camel:to uri="direct:deleteDocumentsWithBrandDetail"/>
+					<camel:to uri="direct:deleteServiceMaterialWithBrandDetail"/>
+				</camel:multicast>
+				<camel:bean ref="brandDetailDAO" method="removeByPK(${header.currentBrandDetailId})"/>
+			</camel:loop>			
+			<camel:bean ref="brandDetailDAO" method="getBrandDetailsByBrandBasicId(${header.agency},${header.brandBasicId})"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:fuzzySearchBrandBasic"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>			
+		    <camel:setHeader headerName="brand">
+                <camel:simple>${body[1]}</camel:simple>
+            </camel:setHeader>
+		    <camel:setHeader headerName="model">
+                <camel:simple>${body[2]}</camel:simple>
+            </camel:setHeader>
+            <camel:bean ref="brandBasicDAO" method="fuzzySearchBrandBasics(${header.agency}, ${header.brand})"/>
+            <camel:choice>
+            	<camel:when>
+            		<camel:simple>${body.size} > 0</camel:simple>
+            		<camel:setHeader headerName="brandBasic">
+            			<camel:simple>${body.get(0)}</camel:simple>
+            		</camel:setHeader>
+		            <camel:bean ref="brandBasicDAO" method="fuzzySearchBrandBasics(${header.agency}, ${header.brandBasic.brand}, ${header.model})"/>
+	               	<camel:choice>
+		            	<camel:when>
+		            		<camel:simple>${body.size} > 0</camel:simple>
+		            		<camel:setHeader headerName="brandBasic">
+		            			<camel:simple>${body.get(0)}</camel:simple>
+		            		</camel:setHeader>
+	            		</camel:when>
+	            	</camel:choice>
+            	</camel:when>
+            </camel:choice>
+            <camel:setBody>
+            	<camel:header>brandBasic</camel:header>
+            </camel:setBody>
+		</camel:route>
+	</camel:routeContext>
+</beans>

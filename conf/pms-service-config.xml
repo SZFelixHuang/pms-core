@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="agencyService" class="com.pms.service.AgencyService" />
+
+	<bean id="departmentService" class="com.pms.service.DepartmentService" />
+
+	<bean id="groupService" class="com.pms.service.GroupService" />
+
+	<bean id="roleService" class="com.pms.service.RoleService" />
+
+	<bean id="labelService" class="com.pms.service.LabelService" />
+
+	<bean id="sessionService" class="com.pms.service.SessionService" />
+
+	<bean id="systemAccountService" class="com.pms.service.SystemAccountService" />
+
+	<bean id="staffService" class="com.pms.service.StaffService" />
+	
+	<bean id="vipService" class="com.pms.service.VipService" />
+	
+	<bean id="bizDomainService" class="com.pms.service.BizDomainService" />
+	
+	<bean id="bizDomainValueService" class="com.pms.service.BizDomainValueService" />
+	
+	<bean id="activitiService" class="com.pms.service.ActivitiService" />
+	
+	<bean id="taskService" class="com.pms.service.TaskService" />
+	
+	<bean id="workOrderStatusService" class="com.pms.service.WorkOrderStatusService" />
+	
+	<bean id="workflowTypeService" class="com.pms.service.WorkflowTypeService" />
+	
+	<bean id="workOrderTypeService" class="com.pms.service.WorkOrderTypeService" />
+	
+	<bean id="carService" class="com.pms.service.CarService" />
+	
+	<bean id="customizedFormService" class="com.pms.service.CustomizedFormService" />
+	
+	<bean id="customizedFormMappingService" class="com.pms.service.CustomizedFormMappingService" />
+	
+	<bean id="customizedFormValuesService" class="com.pms.service.CustomizedFormValuesService"/>
+	
+	<bean id="materialService" class="com.pms.service.MaterialService" />
+	
+	<bean id="documentationService" class="com.pms.service.DocumentationService" />
+	
+	<bean id="brandBasicServcie" class="com.pms.service.BrandBasicServcie" />
+	
+	<bean id="brandDetailService" class="com.pms.service.BrandDetailService" />
+	
+	<bean id="businessService" class="com.pms.service.BusinessService"/>
+	
+	<bean id="businessServiceMappingService" class="com.pms.service.BusinessServiceMappingService" />
+	
+	<bean id="gisLocationService" class="com.pms.service.GisLocationService" />
+	
+	<bean id="storeInformationService" class="com.pms.service.StoreInformationService" />
+	
+	<bean id="workOrderService" class="com.pms.service.WorkOrderService" />
+	
+	<bean id="businessDailyService" class="com.pms.service.BusinessDailyService" />
+	
+	<bean id="materialRepositoryService" class="com.pms.service.MaterialRepositoryService" />
+	
+	<bean id="serialNumberService" class="com.pms.service.SerialNumberService" />
+	
+	<bean id="carOwnerService" class="com.pms.service.CarOwnerService" />	
+	
+	<bean id="materialConsumeService" class="com.pms.service.MaterialConsumeService" />	
+</beans>

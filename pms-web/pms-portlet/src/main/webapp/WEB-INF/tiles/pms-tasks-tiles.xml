@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="viewTasks" extends="pms.tiles">
+		<put-attribute name="title" value="View Tasks" />
+		<put-attribute name="body" value="/pages/tasks/taskFrame.jsp" />
+	</definition>
+	<definition name="tasks" extends="pms.tiles">
+		<put-attribute name="title" value="Tasks" />
+		<put-attribute name="body" value="/pages/tasks/tasks.jsp" />
+	</definition>
+	<definition name="myTasks" extends="pms.tiles">
+		<put-attribute name="title" value="My Tasks" />
+		<put-attribute name="body" value="/pages/tasks/myTask.jsp" />
+	</definition>
+</tiles-definitions>

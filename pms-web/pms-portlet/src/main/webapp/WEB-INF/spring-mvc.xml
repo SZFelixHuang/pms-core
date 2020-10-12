@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+						http://www.springframework.org/schema/mvc 
+						http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd 
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<context:component-scan base-package="com.pms.actions" />
+	
+	<mvc:resources location="/pages/activiti/" mapping="/pages/activiti/**/*.*"/>
+
+	<mvc:annotation-driven conversion-service="conversionService">
+		<mvc:argument-resolvers>
+			<bean class="com.pms.framework.HandlerMultipleComplexMethodArgumentResolver" />
+			<bean class="com.pms.framework.QueryInfoMethodArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+
+	<bean id="tilesViewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="order" value="1" />
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	</bean>
+
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles/pms-framework-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-department-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-group-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-role-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-systemaccount-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-bizdomain-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-vip-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-activiti-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-workOrderStatus-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-workflowType-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-workOrderType-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-car-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-customizedForm-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-customizedFormMapping-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-material-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-materialRepository-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-documentation-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-brand-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-businessService-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-businessServiceMapping-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-storeInformation-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-workOrder-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-serialNumber-tiles.xml</value>
+				<value>/WEB-INF/tiles/pms-tasks-tiles.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/"></property>
+		<property name="suffix" value=".jsp"></property>
+		<property name="order" value="2" />
+	</bean>
+
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<bean class="com.pms.framework.DateTypeConverter" />
+			</set>
+		</property>
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	     <property name="defaultEncoding" value="UTF-8"></property>
+	</bean>
+	
+	<mvc:interceptors>
+	    <bean class="com.pms.framework.DocumentationProcessInterceptor" />
+	    <bean class="com.pms.framework.CustomizedFormProcessInterceptor" />
+	    <bean class="com.pms.framework.GisLocationProcessInterceptor" />
+	</mvc:interceptors>
+</beans>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+	
+	<camel:routeContext id="Routing-serviceMapping-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:getServiceMappings"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="brandId">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="level">
+				<camel:simple>${body[2]}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.level} == 0</camel:simple>
+					<camel:bean ref="serviceMappingDAO" method="getDefaultServiceMappings(${header.agency})" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:choice>
+						<camel:when>
+							<camel:simple>${header.level} > 4</camel:simple>
+							<camel:bean ref="serviceMappingDAO" method="getServiceMappingsWithBrandDetailId(${header.agency},${header.brandId})" />
+						</camel:when>
+						<camel:otherwise>
+							<camel:bean ref="serviceMappingDAO" method="getServiceMappingsWithBrandBasicId(${header.agency},${header.brandId})" />
+						</camel:otherwise>
+					</camel:choice>
+				</camel:otherwise>
+			</camel:choice>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getServiceMapping"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="brandId">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="serviceId">
+				<camel:simple>${body[2]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="level">
+				<camel:simple>${body[3]}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.level} == 0</camel:simple>
+					<camel:bean ref="serviceMappingDAO" method="getDefaultServiceMapping(${header.agency}, ${header.serviceId})" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:choice>
+						<camel:when>
+							<camel:simple>${header.level} > 4</camel:simple>
+							<camel:bean ref="serviceMappingDAO" method="getServiceMappingWithBrandDetailId(${header.agency},${header.brandId},${header.serviceId})" />
+						</camel:when>
+						<camel:otherwise>
+							<camel:bean ref="serviceMappingDAO" method="getServiceMappingWithBrandBasicId(${header.agency},${header.brandId},${header.serviceId})" />
+						</camel:otherwise>
+					</camel:choice>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:setHeader headerName="serviceMappingModel">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.level} == 0</camel:simple>
+					<camel:bean ref="serviceMappingDAO" method="getMaterialMappings4Default(${header.agency}, ${header.serviceId})" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:choice>
+						<camel:when>
+							<camel:simple>${header.level} > 4</camel:simple>
+							<camel:bean ref="serviceMappingDAO" method="getMaterialMappingsWithBrandDetailId(${header.agency},${header.brandId},${header.serviceId})" />
+						</camel:when>
+						<camel:otherwise>
+							<camel:bean ref="serviceMappingDAO" method="getMaterialMappingsWithBrandBasicId(${header.agency},${header.brandId},${header.serviceId})" />
+						</camel:otherwise>
+					</camel:choice>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:filter>
+				<camel:simple>${body.size} > 0</camel:simple>
+				<camel:transform>
+					<camel:javaScript>request.headers.get('serviceMappingModel').materialMappings = request.body</camel:javaScript>
+				</camel:transform>
+			</camel:filter>
+			<camel:setBody>
+				<camel:simple>${header.serviceMappingModel}</camel:simple>
+			</camel:setBody>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:createServiceMapping"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0].agency}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="serviceId">
+				<camel:simple>${body[0].service.id}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body[0].brandBasic} != null</camel:simple>
+					<camel:setHeader headerName="brandId">
+						<camel:simple>${body[0].brandBasic.id}</camel:simple>
+					</camel:setHeader>
+					<camel:setHeader headerName="level">
+						<camel:simple>${body[0].brandBasic.level}</camel:simple>
+					</camel:setHeader>
+					<camel:bean ref="serviceMappingDAO" method="createServiceMappingWithBrandBasic(${body[0]})"/>
+				</camel:when>
+				<camel:otherwise>
+					<camel:setHeader headerName="brandId">
+						<camel:simple>${body[0].brandDetail.id}</camel:simple>
+					</camel:setHeader>
+					<camel:setHeader headerName="level">
+						<camel:constant>5</camel:constant>
+					</camel:setHeader>
+					<camel:bean ref="serviceMappingDAO" method="createServiceMappingWithBrandDetail(${body[0]})"/>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:setBody>
+				<camel:javaScript>[request.headers.get('agency'),request.headers.get('brandId'),request.headers.get('serviceId'), request.headers.get('level')]</camel:javaScript>
+			</camel:setBody>
+			<camel:to uri="direct:getServiceMapping"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri = "direct:deleteServiceMapping"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="brandId">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+		 	<camel:setHeader headerName="serviceId">
+                <camel:simple>${body[2]}</camel:simple>
+            </camel:setHeader>
+			<camel:setHeader headerName="level">
+				<camel:simple>${body[3]}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.serviceId} == null</camel:simple>
+					<camel:choice>
+						<camel:when>
+							<camel:simple>${header.level} > 4</camel:simple>
+							<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandDetailId(${body[0]},${body[1]})"/>
+						</camel:when>
+						<camel:otherwise>
+							<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandBasicId(${body[0]},${body[1]})"/>
+						</camel:otherwise>
+					</camel:choice>
+				</camel:when>
+				<camel:otherwise>
+					<camel:choice>
+						<camel:when>
+							<camel:simple>${header.level} > 4</camel:simple>
+							<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandDetailId(${body[0]},${body[1]},${body[2]})"/>
+						</camel:when>
+						<camel:otherwise>
+							<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandBasicId(${body[0]},${body[1]},${body[2]})"/>
+						</camel:otherwise>
+					</camel:choice>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:setBody>
+				<camel:javaScript>[request.headers.get('agency'),request.headers.get('brandId'), request.headers.get('level')]</camel:javaScript>
+			</camel:setBody>
+			<camel:to uri="direct:getServiceMappings"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri = "direct:batchDeleteServiceMappings"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="brandId">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			 <camel:setHeader headerName="serviceIds">
+                <camel:simple>${body[2]}</camel:simple>
+            </camel:setHeader>
+			<camel:setHeader headerName="level">
+				<camel:simple>${body[3]}</camel:simple>
+			</camel:setHeader>
+            <camel:setHeader headerName="loopSize">
+                <camel:simple>${header.serviceIds.length}</camel:simple>
+            </camel:setHeader>
+			<camel:loop>
+			  	<camel:header>loopSize</camel:header>
+                <camel:setHeader headerName="currentServiceId">
+                    <camel:simple>${header.serviceIds[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+                </camel:setHeader>
+                <camel:choice>
+					<camel:when>
+						<camel:simple>${header.level} > 4</camel:simple>
+						<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandDetailId(${header.agency},${header.brandId},${header.currentServiceId})"/>
+					</camel:when>
+					<camel:otherwise>
+						<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandBasicId(${header.agency},${header.brandId},${header.currentServiceId})"/>
+					</camel:otherwise>
+				</camel:choice>
+			</camel:loop>	
+			<camel:setBody>
+				<camel:javaScript>[request.headers.get('agency'),request.headers.get('brandId'), request.headers.get('level')]</camel:javaScript>
+			</camel:setBody>
+			<camel:to uri="direct:getServiceMappings"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:updateServiceMapping"/>
+			<camel:setHeader headerName="serviceMappingModel">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${header.serviceMappingModel.agency}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body[0].brandBasic} != null</camel:simple>
+					<camel:setHeader headerName="brandId">
+						<camel:simple>${body[0].brandBasic.id}</camel:simple>
+					</camel:setHeader>
+					<camel:setHeader headerName="level">
+						<camel:simple>${body[0].brandBasic.level}</camel:simple>
+					</camel:setHeader>
+				</camel:when>
+				<camel:otherwise>
+					<camel:setHeader headerName="brandId">
+						<camel:simple>${body[0].brandDetail.id}</camel:simple>
+					</camel:setHeader>
+					<camel:setHeader headerName="level">
+						<camel:constant>5</camel:constant>
+					</camel:setHeader>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:setHeader headerName="serviceId">
+				<camel:simple>${header.serviceMappingModel.service.id}</camel:simple>
+			</camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.level} > 4</camel:simple>
+					<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandDetailId(${header.agency},${header.brandId},${header.serviceId})"/>
+					<camel:bean ref="serviceMappingDAO" method="createServiceMappingWithBrandDetail(${header.serviceMappingModel})"/>
+				</camel:when>
+				<camel:otherwise>
+					<camel:bean ref="serviceMappingDAO" method="deleteServiceMappingWithBrandBasicId(${header.agency},${header.brandId},${header.serviceId})"/>
+					<camel:bean ref="serviceMappingDAO" method="createServiceMappingWithBrandBasic(${header.serviceMappingModel})"/>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:setBody>
+				<camel:javaScript>[request.headers.get('agency'),request.headers.get('brandId'),request.headers.get('serviceId'), request.headers.get('level')]</camel:javaScript>
+			</camel:setBody>
+			<camel:to uri="direct:getServiceMapping"/>
+		</camel:route>
+	</camel:routeContext>
+</beans>

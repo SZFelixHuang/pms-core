@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="serialNumberList" extends="pms.tiles">
+		<put-attribute name="title" value="Serial Number List" />
+		<put-attribute name="body" value="/pages/serialNumber/serialNumberList.jsp" />
+	</definition>
+
+	<definition name="addSerialNumber" extends="pms.tiles">
+		<put-attribute name="title" value="Add Serial Number" />
+		<put-attribute name="body" value="/pages/serialNumber/serialNumberAdd.jsp" />
+	</definition>
+	
+	<definition name="editSerialNumber" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Serial Number" />
+		<put-attribute name="body" value="/pages/serialNumber/serialNumberEdit.jsp" />
+	</definition>
+</tiles-definitions>

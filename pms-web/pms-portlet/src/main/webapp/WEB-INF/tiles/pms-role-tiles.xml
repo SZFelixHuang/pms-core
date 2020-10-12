@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="departmentRoleTree" extends="pms.tiles">
+		<put-attribute name="title" value="Department Role Tree" />
+		<put-attribute name="body" value="/pages/role/departmentRoleTree.jsp" />
+	</definition>
+	<definition name="roleList" extends="pms.tiles">
+		<put-attribute name="title" value="Role List" />
+		<put-attribute name="body" value="/pages/role/roleList.jsp" />
+	</definition>
+	<definition name="addRole" extends="pms.tiles">
+		<put-attribute name="title" value="Add Role" />
+		<put-attribute name="body" value="/pages/role/roleAdd.jsp" />
+	</definition>
+	<definition name="editRole" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Role" />
+		<put-attribute name="body" value="/pages/role/roleEdit.jsp" />
+	</definition>
+</tiles-definitions>

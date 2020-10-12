@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.apache.portals.pms</groupId>
+		<artifactId>pms-biz</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<artifactId>pms-dao</artifactId>
+	<name>pms-dao</name>
+
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- PMS moduels -->
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>pms-core</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>pms-model</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+</project>

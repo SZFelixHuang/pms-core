@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="departmentGroupTree" extends="pms.tiles">
+		<put-attribute name="title" value="Department Group Tree" />
+		<put-attribute name="body" value="/pages/group/departmentGroupTree.jsp" />
+	</definition>
+	<definition name="groupList" extends="pms.tiles">
+		<put-attribute name="title" value="Group List" />
+		<put-attribute name="body" value="/pages/group/groupList.jsp" />
+	</definition>
+	<definition name="addGroup" extends="pms.tiles">
+		<put-attribute name="title" value="Add Group" />
+		<put-attribute name="body" value="/pages/group/groupAdd.jsp" />
+	</definition>
+	<definition name="editGroup" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Group" />
+		<put-attribute name="body" value="/pages/group/groupEdit.jsp" />
+	</definition>
+</tiles-definitions>

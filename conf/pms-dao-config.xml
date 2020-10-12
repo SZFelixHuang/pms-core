@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- Configure Transaction AOP -->
+	<tx:advice id="daoTxAdvice" transaction-manager="jtaTransactionManager">
+		<tx:attributes>
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="search*" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="daoPointcut"
+			expression="execution(public * com.pms.dao.*.*DAO*.*(..))" />
+		<aop:advisor advice-ref="daoTxAdvice" pointcut-ref="daoPointcut" />
+	</aop:config>
+
+	<bean id="agencyDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.AgencyDAO" />
+	</bean>
+
+	<bean id="staffDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.StaffDAO" />
+	</bean>
+
+	<bean id="systemAccountDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.SystemAccountDAO" />
+	</bean>
+
+	<bean id="departmentDAO" factory-bean="DAOManagerFactory"
+	factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.DepartmentDAO" />
+	</bean>
+	
+	<bean id="groupDAO" factory-bean="DAOManagerFactory"
+	factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.GroupDAO" />
+	</bean>
+
+	<bean id="roleDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.RoleDAO" />
+	</bean>
+
+	<bean id="permissionDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.PermissionDAO" />
+	</bean>
+
+	<bean id="labelDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.LabelDAO" />
+	</bean>
+
+	<bean id="sessionDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.SessionDAO" />
+	</bean>
+
+	<bean id="bizDomainDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.BizDomainDAO" />
+	</bean>
+
+	<bean id="bizDomainValueDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.BizDomainValueDAO" />
+	</bean>
+
+	<bean id="vipDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.VipDAO" />
+	</bean>
+	
+	<bean id="workOrderStatusDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.WorkOrderStatusDAO" />
+	</bean>
+	
+	<bean id="workflowTypeDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.WorkflowTypeDAO" />
+	</bean>
+
+	<bean id="workOrderTypeDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.WorkOrderTypeDAO" />
+	</bean>
+	
+	<bean id="carDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.CarDAO" />
+	</bean>
+	
+	<bean id="customizedFormDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.CustomizedFormDAO" />
+	</bean>
+
+	<bean id="customizedFormMappingDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.CustomizedFormMappingDAO" />
+	</bean>
+
+	<bean id="customizedFormValuesDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.CustomizedFormValuesDAO" />
+	</bean>
+
+	<bean id="materialDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.MaterialDAO" />
+	</bean>
+	
+	<bean id="documentationDAO"  factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.DocumentationDAO" />
+	</bean>
+	
+	<bean id="brandBasicDAO"  factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.BrandBasicDAO" />
+	</bean>
+
+	<bean id="brandDetailDAO"  factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.BrandDetailDAO" />
+	</bean>
+
+	<bean id="serviceDAO"  factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.ServiceDAO" />
+	</bean>
+	
+	<bean id="serviceMappingDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.ServiceMappingDAO" />
+	</bean>
+
+	<bean id="gisLocationDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.GisLocationDAO" />
+	</bean>
+	
+	<bean id="storeInformationDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.StoreInformationDAO" />
+	</bean>
+
+	<bean id="workOrderDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.WorkOrderDAO" />
+	</bean>
+
+	<bean id="materialRepositoryDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.MaterialRepositoryDAO" />
+	</bean>
+	
+	<bean id="serialNumberDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.SerialNumberDAO" />
+	</bean>
+	
+	<bean id="dailyServiceDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.DailyServiceDAO" />
+	</bean>
+	
+	<bean id="carOwnerDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.CarOwnerDAO" />
+	</bean>
+	
+	<bean id="materialConsumeDAO" factory-bean="DAOManagerFactory"
+		factory-method="getDAOInstance">
+		<constructor-arg name="classPath" value="com.pms.dao.MaterialConsumeDAO" />
+	</bean>
+</beans>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+						
+	<bean id="workOrderStatusValuesCombinationAggregator" class="com.pms.routing.aggregator.WorkOrderStatusValuesCombinationAggregator"/>
+
+	<camel:routeContext id="Routing-workOrderStatus-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri= "direct:getWorkOrderStatusModelWithValues"/>
+			<camel:multicast strategyRef="workOrderStatusValuesCombinationAggregator" parallelProcessing="true" parallelAggregate="true" stopOnException="true">
+				<camel:bean ref="workOrderStatusDAO" method="getWorkOrderStatusModel(${body[0]}, ${body[1]})"/>
+				<camel:bean ref="workOrderStatusDAO" method="getWorkOrderStatusValueModels(${body[0]}, ${body[1]})"/>
+			</camel:multicast>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:createWorkOrderStatusAndValues"/>
+			<camel:bean ref="workOrderStatusDAO" method="createWorkOrderStatusModel(${body[0]})"/>
+			<camel:to uri="direct:batchCreateWorkOrderStatusValues"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:updateWorkOrderStatusAndValues"/>
+			<camel:multicast parallelProcessing="true" parallelAggregate="true" stopOnException="true">
+				<camel:bean ref="workOrderStatusDAO" method="updateWorkOrderStatusModel(${body[0]})"/>
+				<camel:bean ref="workOrderStatusDAO" method="deleteWorkOrderStatusValueModel(${body[0].agency}, ${body[0].statusName})"/>
+			</camel:multicast>
+			<camel:to uri="direct:batchCreateWorkOrderStatusValues"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:batchCreateWorkOrderStatusValues"/>
+			<camel:filter>
+				<camel:simple>${body[0].statusValues} != null</camel:simple>
+				<camel:setHeader headerName="agency">
+					<camel:simple>${body[0].agency}</camel:simple>
+				</camel:setHeader>
+				<camel:setHeader headerName="statusName">
+					<camel:simple>${body[0].statusName}</camel:simple>
+				</camel:setHeader>
+				<camel:setHeader headerName="loopSize">
+					<camel:simple>${body[0].statusValues.size}</camel:simple>
+				</camel:setHeader>
+				<camel:loop>
+					<camel:header>loopSize</camel:header>
+					<camel:setHeader headerName="currentStatusValueModel">
+						<camel:simple>${body[0].statusValues.get(${exchangeProperty.CamelLoopIndex})}</camel:simple>
+					</camel:setHeader>
+					<camel:bean ref="workOrderStatusDAO" method="createWorkOrderStatusValueModel(${header.agency}, ${header.statusName}, ${header.currentStatusValueModel})"/>
+				</camel:loop>
+			</camel:filter>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteWorkOrderStatusWithReturn"/>
+			<camel:multicast parallelProcessing="true" parallelAggregate="true" stopOnException="true">
+				<camel:bean ref="workOrderStatusDAO" method="deleteWorkOrderStatusModel(${body[0].agency}, ${body[0].statusName})"/>
+				<camel:bean ref="workOrderStatusDAO" method="deleteWorkOrderStatusValueModel(${body[0].agency}, ${body[0].statusName})"/>
+			</camel:multicast>
+			<camel:bean ref="workOrderStatusDAO" method="getWorkOrderStatusModels(${body[0].agency})"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:batchDeleteWorkOrderStatusWithReturn"/>
+			<camel:setHeader headerName="loopSize">
+				<camel:simple>${body[1].length}</camel:simple>
+			</camel:setHeader>
+			<camel:multicast parallelProcessing="true" parallelAggregate="true" stopOnException="true">
+				<camel:loop>
+					<camel:header>loopSize</camel:header>
+					<camel:setHeader headerName="currentWorkOrderStatusName">
+						<camel:simple>${body[1][${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+					</camel:setHeader>
+						<camel:bean ref="workOrderStatusDAO" method="deleteWorkOrderStatusModel(${body[0]}, ${header.currentWorkOrderStatusName})"/>
+						<camel:bean ref="workOrderStatusDAO" method="deleteWorkOrderStatusValueModel(${body[0]}, ${header.currentWorkOrderStatusName})"/>
+				</camel:loop>
+			</camel:multicast>
+			<camel:bean ref="workOrderStatusDAO" method="getWorkOrderStatusModels(${body[0]})"/>
+		</camel:route>
+	</camel:routeContext>
+</beans>

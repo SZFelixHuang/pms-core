@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+
+	<bean id="documentationSyncFilter" class="com.pms.routing.filter.DocumentationSyncFilter" />
+
+	<bean id="documentationStoreSyncEndProcessor"
+		class="com.pms.routing.processor.DocumentationStoreSyncEndProcessor" />
+
+	<bean id="documentationStoreSyncStartProcessor"
+		class="com.pms.routing.processor.DocumentationStoreSyncStartProcessor" />
+
+	<bean id="documentationDeletingSyncProcessor"
+		class="com.pms.routing.processor.DocumentationDeletingSyncProcessor" />
+
+	<bean id="documentationUpdationSyncStartProcessor"
+		class="com.pms.routing.processor.DocumentationUpdationSyncStartProcessor" />
+		
+	<bean id="documentationUpdationSyncEndProcessor"
+		class="com.pms.routing.processor.DocumentationUpdationSyncEndProcessor" />
+
+	<bean id="deleteDocumentationRequestProcessor"
+		class="com.pms.routing.processor.DeleteDocumentationRequestProcessor" />
+
+	<bean id="syncDocumentation2FtpProcessor"
+		class="com.pms.routing.processor.SyncDocumentation2FtpProcessor" />
+
+	<bean id="documentationCleanProcessor" class="com.pms.routing.processor.DocumentationCleanProcessor" />
+	
+	<bean id="scaleImageGeneratorProcessor" class="com.pms.routing.processor.ScaleImageGeneratorProcessor"/>
+	
+	<bean id="documentationLookupSyncStartProcessor" class="com.pms.routing.processor.DocumentationLookupSyncStartProcessor"/>
+	
+	<bean id="documentationLookupSyncEndProcessor" class="com.pms.routing.processor.DocumentationLookupSyncEndProcessor"/>
+
+	<camel:routeContext id="Routing-documentations-Module"
+		xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:documentationSync" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.fileType} == 'submitted'</camel:simple>
+					<camel:to uri="direct:documentationStoreSync" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.fileType} == 'deleted'</camel:simple>
+					<camel:to uri="direct:documentationDeletingSycn" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.fileType} == 'updated'</camel:simple>
+					<camel:to uri="direct:documentationUpdationSycn" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.fileType} == 'lookup'</camel:simple>
+					<camel:to uri="direct:documentationLookupSycn" />
+				</camel:when>
+			</camel:choice>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:documentationLookupSycn"/>
+			<camel:process ref="documentationLookupSyncStartProcessor" />
+			<camel:bean ref="documentationDAO" method="saveOrUpdate(${body})" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.inputStream} == null</camel:simple>
+					<camel:bean ref="documentationDAO" method="getDocumentContent(${header.agency}, ${header.refFileKey})"/>
+					<camel:setHeader headerName="inputStream">
+						<camel:simple>${body}</camel:simple>
+					</camel:setHeader>
+				</camel:when>
+			</camel:choice>
+			<camel:bean ref="documentationDAO" method="insertDocumentationContent(${header.agency},${header.fileKey}, ${header.inputStream})" />
+			<camel:process ref="documentationLookupSyncEndProcessor" />
+			<camel:process ref="scaleImageGeneratorProcessor" />
+			<camel:setExchangePattern pattern="InOnly" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:documentationStoreSync" />
+			<camel:process ref="documentationStoreSyncStartProcessor" />
+			<camel:bean ref="documentationDAO" method="saveOrUpdate(${body})" />
+			<camel:bean ref="documentationDAO" method="insertDocumentationContent(${body.agency},${body.fileKey}, ${header.inputStream})" />
+			<camel:process ref="documentationStoreSyncEndProcessor" />
+			<camel:process ref="scaleImageGeneratorProcessor" />
+			<camel:setExchangePattern pattern="InOnly" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:documentationDeletingSycn" />
+			<camel:process ref="documentationDeletingSyncProcessor" />
+			<camel:bean ref="documentationDAO"
+				method="deleteDocumentation(${header.agency}, ${header.fileKey})" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:documentationUpdationSycn" />
+			<camel:process ref="documentationUpdationSyncStartProcessor" />
+			<camel:bean ref="documentationDAO"
+				method="updateDocumentation(${body.agency},${body.fileKey}, ${header.inputStream})" />
+			<camel:process ref="documentationUpdationSyncEndProcessor" />
+			<camel:process ref="scaleImageGeneratorProcessor" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:sync2FTP" />
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="fileKey">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="documentationDAO" method="getDocumentContent(${body[0]},${body[1]})" />
+			<camel:process ref="syncDocumentation2FtpProcessor" />
+			<camel:bean ref="documentationDAO" method="getDocumentModel(${header.agency},${header.fileKey})" />
+			<camel:setHeader headerName="newDocumentation">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:process ref="scaleImageGeneratorProcessor" />
+			<camel:setBody>
+				<camel:simple resultType="java.lang.Boolean">true</camel:simple>
+			</camel:setBody>
+		</camel:route>
+	</camel:routeContext>
+</beans>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="departmentTree" extends="pms.tiles">
+		<put-attribute name="title" value="Department Tree" />
+		<put-attribute name="body" value="/pages/department/departmentTree.jsp" />
+	</definition>
+	<definition name="addNewDepartment" extends="pms.tiles">
+		<put-attribute name="title" value="New Department" />
+		<put-attribute name="body" value="/pages/department/departmentAdd.jsp" />
+	</definition>
+	<definition name="editNewDepartment" extends="pms.tiles">
+		<put-attribute name="title" value="edit Department" />
+		<put-attribute name="body" value="/pages/department/departmentEdit.jsp" />
+	</definition>
+	<definition name="deleteDepartment" extends="pms.tiles">
+		<put-attribute name="title" value="delete Department" />
+		<put-attribute name="body" value="/pages/department/departmentDelete.jsp" />
+	</definition>
+</tiles-definitions>

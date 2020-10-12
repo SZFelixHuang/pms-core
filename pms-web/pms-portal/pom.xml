@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<prerequisites>
+		<maven>2.0.9</maven>
+	</prerequisites>
+
+	<artifactId>pms-portal</artifactId>
+	<name>jetspeed portal</name>
+
+	<parent>
+		<groupId>org.apache.portals.pms</groupId>
+		<artifactId>pms-web</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<packaging>war</packaging>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/xom/xom -->
+		<dependency>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.portals.jetspeed-2/jetspeed-api -->
+		<dependency>
+			<groupId>org.apache.portals.jetspeed-2</groupId>
+			<artifactId>jetspeed-api</artifactId>
+			<version>${org.apache.portals.jetspeed.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.portals.jetspeed-2/jetspeed-commons -->
+		<dependency>
+			<groupId>org.apache.portals.jetspeed-2</groupId>
+			<artifactId>jetspeed-commons</artifactId>
+			<version>${org.apache.portals.jetspeed.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-jaxrs -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>${resteasy.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.resteasy</groupId>
+					<artifactId>jaxrs-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>4.0.9.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>4.0.9.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.0.9.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-aop -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>4.0.9.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>4.0.9.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+			<version>4.0.9.RELEASE</version>
+		</dependency>
+		<!-- jetspeed war dependencies -->
+		<dependency>
+			<groupId>org.apache.portals.jetspeed-2</groupId>
+			<artifactId>jetspeed-dependencies</artifactId>
+			<version>${org.apache.portals.jetspeed.version}</version>
+			<type>pom</type>
+			<exclusions>
+				<exclusion>
+					<groupId>taglibs</groupId>
+					<artifactId>random</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-jaxrs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-xc</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-mapper-asl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-core-asl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-ext</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-ext</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-jaxrs -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-xc -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>jetspeed</artifactId>
+			<version>2.3.1</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.portals.pluto</groupId>
+			<artifactId>pluto-container-api</artifactId>
+			<version>${org.apache.pluto.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>pms.jar.random</groupId>
+			<artifactId>random</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>pms-sso-tools</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>pms-commons</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.portals.jetspeed-2</groupId>
+				<artifactId>jetspeed-unpack-maven-plugin</artifactId>
+				<version>${org.apache.portals.jetspeed.version}</version>
+				<executions>
+					<execution>
+						<id>unpack-jetspeed-properties</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<unpack>
+								<artifact>org.apache.portals.jetspeed-2:jetspeed-portal-resources:jar</artifact>
+								<targetDirectory>${project.build.directory}/${project.build.finalName}</targetDirectory>
+								<resources>
+									<resource>
+										<path>conf/jetspeed</path>
+										<include>jetspeed.properties</include>
+										<destination>WEB-INF/conf</destination>
+									</resource>
+								</resources>
+							</unpack>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.portals.jetspeed-2</groupId>
+						<artifactId>jetspeed-portal-resources</artifactId>
+						<version>${org.apache.portals.jetspeed.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.portals.jetspeed-2</groupId>
+				<artifactId>jetspeed-deploy-maven-plugin</artifactId>
+				<version>${org.apache.portals.jetspeed.version}</version>
+				<executions>
+					<execution>
+						<id>deploy-jetspeed-layouts</id>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<targetBaseDir>${project.build.directory}/${project.build.finalName}</targetBaseDir>
+							<destinations>
+								<local>WEB-INF/deploy/local</local>
+							</destinations>
+							<deployments>
+								<deployment>
+									<artifact>org.apache.portals.pms:jetspeed-layouts:war</artifact>
+									<destination>local</destination>
+								</deployment>
+							</deployments>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.portals.pms</groupId>
+						<artifactId>jetspeed-layouts</artifactId>
+						<version>2.3.1</version>
+						<type>war</type>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>${project.artifactId}</warName>
+					<overlays>
+						<overlay>
+							<id>jetspeed</id>
+							<groupId>org.apache.portals.pms</groupId>
+							<artifactId>jetspeed</artifactId>
+							<excludes>
+								<exclude>WEB-INF/pages/**</exclude>
+								<exclude>WEB-INF/min-pages/**</exclude>
+								<exclude>WEB-INF/ui-pages/**</exclude>
+								<exclude>WEB-INF/min-ui-pages/**</exclude>
+								<exclude>WEB-INF/conf/jetspeed.properties</exclude>
+							</excludes>
+						</overlay>
+					</overlays>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

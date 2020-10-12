@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="serviceMapping" extends="pms.tiles">
+		<put-attribute name="title" value="Service Mapping" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/serviceMapping.jsp" />
+	</definition>
+	<definition name="brandTree4ServiceMapping" extends="pms.tiles">
+		<put-attribute name="title" value="Brand Basic Tree" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/brandTree.jsp" />
+	</definition>
+	<definition name="serviceMappingList" extends="pms.tiles">
+		<put-attribute name="title" value="Service Mapping List" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/serviceMappingList.jsp" />
+	</definition>
+	<definition name="serviceMappingAdd" extends="pms.tiles">
+		<put-attribute name="title" value="Service Mapping Add" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/serviceMappingAdd.jsp" />
+	</definition>
+	<definition name="serviceMappingEdit" extends="pms.tiles">
+		<put-attribute name="title" value="Service Mapping Edit" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/serviceMappingEdit.jsp" />
+	</definition>
+	<definition name="serviceLookUp4Mapping" extends="pms.tiles">
+		<put-attribute name="title" value="Service Look Up" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/serviceLookUp.jsp" />
+	</definition>
+	<definition name="materialLookUp4Mapping" extends="pms.tiles">
+		<put-attribute name="title" value="Material Look Up" />
+		<put-attribute name="body" value="/pages/businessServiceMapping/materialLookUp.jsp" />
+	</definition>
+</tiles-definitions>

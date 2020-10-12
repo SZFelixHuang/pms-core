@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 
+	1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd"> -->
+<application>
+	<display-name>pms-web</display-name>
+	<module>
+		<web>
+			<web-uri>jetspeed.war</web-uri>
+			<context-root>/jetspeed</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>pms-portlet.war</web-uri>
+			<context-root>/pms-portlet</context-root>
+		</web>
+	</module>
+	<module>
+		<web>
+			<web-uri>jetspeed-layouts.war</web-uri>
+			<context-root>/jetspeed-layouts</context-root>
+		</web>
+	</module>
+    <module>
+        <web>
+            <web-uri>pms-sso.war</web-uri>
+            <context-root>/pms-sso</context-root>
+        </web>
+    </module>
+    <library-directory>lib</library-directory>
+</application>

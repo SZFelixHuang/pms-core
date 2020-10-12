@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+	<display-name>PMS-Routing-EAR</display-name>
+	<description>PMS Routing System</description>
+	<module>
+		<java>pms-core-1.0.jar</java>
+	</module>
+	<module>
+		<java>pms-jms-1.0.jar</java>
+	</module>
+	<module>
+		<java>pms-dao-1.0.jar</java>
+	</module>
+	<module>
+		<java>pms-model-1.0.jar</java>
+	</module>
+	<module>
+		<java>pms-commons-1.0.jar</java>
+	</module>
+	<module>
+		<java>pms-routing-1.0.jar</java>
+	</module>
+	<library-directory>lib</library-directory>
+</application>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+
+<portlet-app version="1.0"
+	xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
+    <portlet id="SimpleLayoutPortlet">
+        <description>The SimpleLayoutPortlet requires a ViewPage layout template set through the portlet preferences
+            which provides its own layout algorithm</description>
+        <portlet-name>SimpleLayout</portlet-name>
+        <display-name>Simple readonly fixed Layout</display-name>
+        <portlet-class>org.apache.jetspeed.portlets.layout.LayoutPortlet</portlet-class>
+        <init-param>
+            <name>ViewPage</name>
+            <value>columns</value>
+        </init-param>
+        <init-param>
+            <name>MaxPage</name>
+            <value>maximized</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+        <portlet-info>
+            <title>SimpleLayoutPortlet</title>
+            <short-title>SimpleLayout</short-title>
+        </portlet-info>
+    </portlet>
+	<portlet id="VelocityOneColumn">
+		<portlet-name>VelocityOneColumn</portlet-name>
+		<display-name>One Column</display-name>
+		<display-name xml:lang="zh">单列</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>1</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>100%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>OneColumn</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<supports>
+			<mime-type>text/vnd.wap.wml</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>One Column</title>
+			<short-title>OneColumn</short-title>
+		</portlet-info>
+	</portlet>
+	<portlet id="VelocityTwoColumns">
+		<portlet-name>VelocityTwoColumns</portlet-name>
+		<display-name>Two Columns</display-name>
+		<display-name xml:lang="zh">双列</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>2</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>50%,50%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>TwoColumns</value>
+		</init-param>
+		<!-- <init-param> <name>editorType</name> <value>desktop</value> </init-param> -->
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Two Columns</title>
+			<short-title>TwoColumns</short-title>
+		</portlet-info>
+	</portlet>
+
+	<portlet id="VelocityTwoColumnsSmallLeft">
+		<portlet-name>VelocityTwoColumnsSmallLeft</portlet-name>
+		<display-name>Two Columns (Left: 15%, Right: 85%)</display-name>
+		<display-name xml:lang="zh">双列 (左边：15%，右边：85%)</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>2</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>15%,85%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>TwoColumns</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Two Columns (15%/85%)</title>
+			<short-title>Two Columns (15%/85%)</short-title>
+		</portlet-info>
+	</portlet>
+	<portlet id="VelocityThreeColumns">
+		<portlet-name>VelocityThreeColumns</portlet-name>
+		<display-name>Three Columns</display-name>
+		<display-name xml:lang="zh">3列</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>3</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>33%,33%,33%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>ThreeColumns</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Three Columns</title>
+			<short-title>ThreeColumns</short-title>
+		</portlet-info>
+	</portlet>
+	<portlet id="VelocityTwoColumns2575">
+		<portlet-name>VelocityTwoColumns2575</portlet-name>
+		<display-name>Two Columns (Left:25%, Right: 75%)</display-name>
+		<display-name xml:lang="zh">双列(左边：25%，右边：75%)</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>2</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>25%,75%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>TwoColumns</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Two Columns (25%/75%)</title>
+			<short-title>VelocityTwoColumns2575</short-title>
+		</portlet-info>
+	</portlet>
+	<portlet id="VelocityFourColumns">
+		<portlet-name>VelocityFourColumns</portlet-name>
+		<display-name>Four Columns</display-name>
+		<display-name xml:lang="zh">4列</display-name>
+		<display-name xml:lang="zh-TW">基於Velocity表格的4列佈局</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>4</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>25%,25%,25%,25%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>FourColumns</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Four Columns</title>
+			<short-title>FourColumns</short-title>
+		</portlet-info>
+	</portlet>
+	<portlet id="VelocityFiveColumns">
+		<portlet-name>VelocityFiveColumns</portlet-name>
+		<display-name>Five Columns</display-name>
+		<display-name xml:lang="zh">5列</display-name>
+		<display-name xml:lang="zh-TW">基於Velocity表格的5列佈局</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>5</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>20%,20%,20%,20%,20%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>FiveColumns</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Five Columns</title>
+			<short-title>FiveColumns</short-title>
+		</portlet-info>
+	</portlet>
+	<portlet id="VelocitySixColumns">
+		<portlet-name>VelocitySixColumns</portlet-name>
+		<display-name>Six Columns</display-name>
+		<display-name xml:lang="zh">基于Velocity表格的6列布局</display-name>
+		<display-name xml:lang="zh-TW">基於Velocity表格的6列佈局</display-name>
+		<portlet-class>org.apache.jetspeed.portlets.layout.MultiColumnPortlet</portlet-class>
+		<init-param>
+			<name>ViewPage</name>
+			<value>columns</value>
+		</init-param>
+		<init-param>
+			<name>MaxPage</name>
+			<value>maximized</value>
+		</init-param>
+		<init-param>
+			<name>columns</name>
+			<value>6</value>
+		</init-param>
+		<init-param>
+			<name>sizes</name>
+			<value>16%,16%,16%,16%,16%,16%</value>
+		</init-param>
+		<init-param>
+			<name>layoutType</name>
+			<value>SixColumns</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>edit</portlet-mode>
+			<portlet-mode>help</portlet-mode>
+		</supports>
+		<resource-bundle>org.apache.jetspeed.portlets.layout.resources.LayoutResource</resource-bundle>
+		<portlet-info>
+			<title>Six Columns</title>
+			<short-title>SixColumns</short-title>
+		</portlet-info>
+	</portlet>
+</portlet-app>

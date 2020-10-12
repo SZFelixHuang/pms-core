@@ -1,0 +1,116 @@
+#set($portlets = $renderRequest.getAttribute("portlets"))
+#set($displayNum=15)
+#set($pages = $portlets.size() / $displayNum)
+#set($pages=$Integer.parseInt($pages))
+
+#if($portlets.size() > 0)
+	#if($portlets.size() % $displayNum == 0)
+		#if($portlets.size() < $displayNum)
+			#set($pages=1)
+		#end	
+	#else
+		#set($pages=$pages + 1)
+	#end
+#end
+
+<style type="text/css">
+#if($pages > 0)
+	#foreach($pageIndex in [1..$pages])
+		.portletCls$pageIndex 
+		{
+			#if($pageIndex > 1)
+			display:none;
+			#end
+		}	
+	#end
+#end
+</style>
+
+<script type="text/javascript">
+function addPortletToPage(portletName)
+{                
+  	reg=new RegExp("(^| )maxRow=([^;]*)(;|$)");
+	if(arr=document.cookie.match(reg))
+	{
+		var maxRow = parseInt(unescape(arr[2]));
+	 	var url = "/jetspeed/services/pagelayout/fragment/portlet/" + portletName + "/?_type=json&row=" + (maxRow + 1) +"&col=0";
+	    $.ajax({
+	        url: url,
+	        headers: {
+	            "X-Portal-Path": getReturnPagePath()
+	        },
+	        type: "POST",
+	        success: function (data) 
+	        {
+	       	  window.location.href = "/jetspeed/portal/portletCustomizer.psml";
+	        }
+	    });
+	}                                
+}
+function getReturnPagePath()
+{
+   var jsPagePath = jetspeed.url.getQueryParameter( document.location.href, "jspage" );
+   if (jsPagePath == null )
+   {
+      var arr,reg=new RegExp("(^| )X-Portal-Path=([^;]*)(;|$)");
+      if(arr=document.cookie.match(reg))
+      {
+        jsPagePath = unescape(arr[2]);
+      }
+   }
+   return jsPagePath;
+}
+function goBack()
+{
+  window.location.href = "/jetspeed/portal/portletCustomizer.psml";
+}
+var portletClsClasses = new Array();
+#if($pages > 0)
+	#foreach($pageIndex in [1..$pages])
+		portletClsClasses[$pageIndex] = ".portletCls$pageIndex";
+	#end
+#end
+</script>
+<div class="fieldUnit" style="float:right;">
+    <div class="field-label"></div>
+	<div class="field-element">
+  		<div class="menu-bar" style="padding-right: 10px;">
+			<button class="btn btn-cancel" onclick="goBack();"><span class="icon-trash"></span>返回上一级</button>
+		</div>
+	</div>
+</div>
+<table>
+	 <thead>
+	 	<th style="text-align:center">序号</th>
+	 	<th>Portlet名称</th>
+	 	<th style="text-align:center">操作</th>
+	 </thead>
+	 #foreach($portlet in $portlets)
+		#set($temp=$velocityCount / $displayNum)
+		#set($temp=$Integer.parseInt($temp))
+		#if($velocityCount % $displayNum > 0)
+			#set($temp=$temp + 1)
+		#end
+	 	<tr id="portlet${velocityCount}" class="portletCls$temp">
+	 		<td style="text-align:center">${velocityCount}</td>
+	 		<td style="text-align:left;">${portlet.displayName}</td>
+	 		<td style="text-align:center"><a href="javascript:addPortletToPage('${portlet.name}')" style="text-decoration : none;"><span class="icon-share hover-icon"></span></a></td>
+	 	</tr>
+	 #end
+</table>
+
+#if($pages > 0)
+<div style="width:100%;">
+<ul class="pagination">
+    <li id="prev" class="disabled"><a href="javascript:pagenationPrevious()"><span class="icon-angle-left"></span></a></li>
+#foreach($pageIndex in [1..$pages])
+	#if($velocityCount == 1)
+	    	<li id="pagenation1" class="active"><a href="javascript:pagenation($velocityCount);">$pageIndex</a></li>
+	#else
+	    	<li id="pagenation${velocityCount}"><a href="javascript:pagenation($velocityCount);">$pageIndex</a></li>
+	#end
+#end
+    <li id="next"><a href="javascript:pagenationNext()"><span class="icon-angle-right"></span></a></li>
+</ul>
+</div>
+#end

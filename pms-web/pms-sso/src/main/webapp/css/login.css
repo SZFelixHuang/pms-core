@@ -1,0 +1,61 @@
+.login-input {
+	border-radius: 4px;
+	width: 300px;
+	height: 40px;
+	margin: 0 auto;
+	background-color: rgba(255,255,255,0.2);
+}
+
+.login-input input {
+	outline: none;
+	border: none;
+	width: 250px;
+	height: 100%;
+	font-size: 16px;
+	color: #FEFFFA;
+	background: none;
+}
+
+.login-input span {
+	background: none;
+	border: none;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0 10px;
+}
+
+.head-portrait-icon {
+	width: 80px;
+	height: 80px;
+	padding: 2px;
+	background-color: #FEFFFA;
+	border: 1px solid #ddd;
+}
+
+.banner {
+	background-position: 50%;
+	background-size: cover;
+	transform-style: preserve-3d;
+}
+
+.banner.banner-full-height {
+	height: 100vh;
+}
+
+.banner.overlay-black {
+	background-image: url(../resources/bg-home-bigscreen.jpg);
+	color: #fff;
+	position: relative;
+	z-index: 0;
+}
+
+.overlay-black:before {
+	background-color: rgba(0, 0, 0, .6);
+	position: absolute;
+	content: "";
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+}

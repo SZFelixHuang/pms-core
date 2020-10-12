@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="bizDomainList" extends="pms.tiles">
+		<put-attribute name="title" value="Standard Choice List" />
+		<put-attribute name="body" value="/pages/bizDomain/bizDomainList.jsp" />
+	</definition>
+
+	<definition name="bizDomainEdit" extends="pms.tiles">
+		<put-attribute name="title" value="Standard Choice Edit" />
+		<put-attribute name="body" value="/pages/bizDomain/bizDomainEdit.jsp" />
+	</definition>
+
+	<definition name="bizDomainAdd" extends="pms.tiles">
+		<put-attribute name="title" value="Standard Choice Add" />
+		<put-attribute name="body" value="/pages/bizDomain/bizDomainAdd.jsp" />
+	</definition>
+	
+	<definition name="bizDomainValueList" extends="pms.tiles">
+		<put-attribute name="title" value="Standard Choice Value List" />
+		<put-attribute name="body"
+			value="/pages/bizDomain/bizDomainValueList.jsp" />
+	</definition>
+	
+	<definition name="bizDomainValueAdd" extends="pms.tiles">
+		<put-attribute name="title" value="Standard Choice Value Add" />
+		<put-attribute name="body"
+			value="/pages/bizDomain/bizDomainValueAdd.jsp" />
+	</definition>
+	
+	<definition name="bizDomainValueEdit" extends="pms.tiles">
+		<put-attribute name="title" value="Standard Choice Value Edit" />
+		<put-attribute name="body"
+			value="/pages/bizDomain/bizDomainValueEdit.jsp" />
+	</definition>
+</tiles-definitions>

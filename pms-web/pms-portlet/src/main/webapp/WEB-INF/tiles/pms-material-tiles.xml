@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="materialList" extends="pms.tiles">
+		<put-attribute name="title" value="Material List" />
+		<put-attribute name="body" value="/pages/material/materialList.jsp" />
+	</definition>
+
+	<definition name="addMaterial" extends="pms.tiles">
+		<put-attribute name="title" value="Add Material" />
+		<put-attribute name="body" value="/pages/material/materialAdd.jsp" />
+	</definition>
+
+	<definition name="editMaterial" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Material" />
+		<put-attribute name="body" value="/pages/material/materialEdit.jsp" />
+	</definition>
+	
+	<definition name="viewMaterial" extends="pms.tiles">
+		<put-attribute name="title" value="View Material" />
+		<put-attribute name="body" value="/pages/material/materialView.jsp" />
+	</definition>
+	
+	<definition name="selectMaterialType" extends="pms.tiles">
+		<put-attribute name="title" value="Select Material Type" />
+		<put-attribute name="body" value="/pages/material/selectMaterialType.jsp" />
+	</definition>
+</tiles-definitions>

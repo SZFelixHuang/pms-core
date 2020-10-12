@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache.portals.pms</groupId>
+		<artifactId>pms-biz</artifactId>
+		<version>1.0</version>
+	</parent>
+	<artifactId>pms-mbean</artifactId>
+
+	<name>pms-mbean</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>pms-core</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.portals.pms</groupId>
+			<artifactId>pms-commons</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.sf.maven-sar</groupId>
+				<artifactId>maven-sar-plugin</artifactId>
+				<version>1.0</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<classifier>jar</classifier>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<packaging>sar</packaging>
+</project>

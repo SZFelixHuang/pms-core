@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         version="2.4"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <display-name>My Portlet Application</display-name>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>springMVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springMVC</servlet-name>
+		<url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <description>MVC Servlet for Jetspeed Portlet Applications</description>
+        <display-name>Jetspeed Container</display-name>
+        <servlet-name>JetspeedContainer</servlet-name>
+        <servlet-class>org.apache.jetspeed.container.JetspeedContainerServlet</servlet-class>
+        <init-param>
+            <param-name>contextName</param-name>
+            <param-value>pms-portlet</param-value>
+        </init-param>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JetspeedContainer</servlet-name>
+        <url-pattern>/container/*</url-pattern>
+    </servlet-mapping>
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://java.sun.com/portlet</taglib-uri>
+            <taglib-location>/WEB-INF/tld/portlet.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://java.sun.com/portlet_2_0</taglib-uri>
+            <taglib-location>/WEB-INF/tld/portlet_2_0.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+
+    <!-- Define Velocity Servlet -->
+    <servlet>
+        <servlet-name>velocity</servlet-name>
+        <servlet-class>org.apache.portals.bridges.velocity.BridgesVelocityViewServlet</servlet-class>
+    </servlet>
+
+    <!-- Map *.vm files to Velocity -->
+    <servlet-mapping>
+        <servlet-name>velocity</servlet-name>
+        <url-pattern>*.vm</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>SecurityFilter</filter-name>
+        <filter-class>com.pms.sso.SSOFilter</filter-class>
+        <init-param>
+            <param-name>redirectURL</param-name>
+            <param-value>/jetspeed</param-value>
+        </init-param>
+        <init-param>
+            <param-name>loginURL</param-name>
+            <param-value>/pms-sso/actions/sso/doLogin</param-value>
+        </init-param>
+        <init-param>
+            <param-name>loginURL</param-name>
+            <param-value>/pms-sso/actions/sso/doLogout</param-value>
+        </init-param>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="customizedFormList" extends="pms.tiles">
+		<put-attribute name="title" value="Customized Form List" />
+		<put-attribute name="body" value="/pages/customizeForm/customizedFormList.jsp" />
+	</definition>
+
+	<definition name="customizedFormDesigner" extends="pms.tiles">
+		<put-attribute name="title" value="Customized Form Designer" />
+		<put-attribute name="body" value="/pages/customizeForm/customizedFormDesigner.jsp" />
+	</definition>
+	
+	<definition name="addCustomizedForm" extends="pms.tiles">
+		<put-attribute name="title" value="Add Customized Form" />
+		<put-attribute name="body" value="/pages/customizeForm/customizedFormAdd.jsp" />
+	</definition>
+
+	<definition name="editCustomizedForm" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Customized Form" />
+		<put-attribute name="body" value="/pages/customizeForm/customizedFormEdit.jsp" />
+	</definition>
+</tiles-definitions>

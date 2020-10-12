@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://www.springframework.org/schema/data/jpa
+						http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.pms" />
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:${pms_home_dir}/${pms_conf_dir}/ServerConfig.properties
+				</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Configure XA data source -->
+	<bean id="standardXADataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean"
+		init-method="init" destroy-method="close">
+		<property name="xaDataSourceClassName" value="com.alibaba.druid.pool.xa.DruidXADataSource" />
+		<property name="uniqueResourceName" value="PMSXADataSource" />
+		<property name="poolSize" value="5" />
+		<property name="maxPoolSize" value="30" />
+		<property name="xaProperties">
+			<props>
+				<prop key="url">jdbc:${pms.db.type}://${pms.db.host}:${pms.db.port}${pms.db.sidLink}${pms.db.sid}${pms.db.urlPramaters}</prop>
+				<prop key="username">${pms.db.username}</prop>
+				<prop key="password">${pms.db.password}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Configure JTA Transactioin Manager -->
+	<bean id="pmsUserTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager"
+		init-method="init" destroy-method="close">
+		<property name="forceShutdown" value="false" />
+		<property name="transactionTimeout" value="30000000" />
+	</bean>
+
+	<bean id="pmsUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp">
+		<property name="transactionTimeout" value="30000000" />
+	</bean>
+
+	<bean id="pmsJtaPlatfom" class="com.pms.framework.persistence.PMSJtaPlatfom" />
+
+	<bean id="jtaTransactionManager"
+		class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="transactionManager" ref="pmsUserTransactionManager" />
+		<property name="userTransaction" ref="pmsUserTransaction" />
+		<property name="allowCustomIsolationLevels" value="true" />
+		<property name="rollbackOnCommitFailure" value="true" />
+	</bean>
+
+	<!-- Configure JPA Entity Manager Factory -->
+	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+
+	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.PMSHibernateJpaVendorAdapter">
+		<property name="dataBaseType" value="${pms.db.type}" />
+		<property name="showSql" value="${pms.db.showSql}" />
+		<property name="generateDdl" value="false" />
+		<property name="databasePlatform" value="${pms.db.platform}" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		depends-on="pmsJtaPlatfom">
+		<property name="persistenceUnitName" value="pms" />
+		<property name="packagesToScan" value="com.pms.entity" />
+		<property name="jtaDataSource" ref="standardXADataSource" />
+		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.transaction.jta.platform">com.pms.framework.persistence.PMSJtaPlatfom</prop>
+				<prop key="hibernate.transaction.flush_before_completion">true</prop>
+				<prop key="hibernate.transaction.auto_close_session">true</prop>
+				<prop key="hibernate.current_session_context_class">jta</prop>
+				<prop key="hibernate.connection.release_mode">auto</prop>
+			</props>
+		</property>
+		<property name="jpaDialect" ref="jpaDialect" />
+	</bean>
+
+	<!-- Configure DB Template -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="standardXADataSource" />
+	</bean>
+
+	<bean id="dbAccessor" class="com.pms.framework.persistence.DBAccessor" />
+
+	<bean id="DAOManagerFactory" class="com.pms.framework.DAOManagerFactory">
+		<property name="daoTypes">
+			<map>
+		        <entry key="MYSQL" value="Mysql" />   
+			</map>
+		</property>
+	</bean>
+
+	<!-- JMS configuration -->
+	<bean id="jmsUser" class="org.apache.activemq.security.AuthenticationUser">
+		<constructor-arg index="0">
+			<value>${pms.jms.username}</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>${pms.jms.password}</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>${pms.jms.group}</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="simpleAuthPlugin" class="org.apache.activemq.security.SimpleAuthenticationPlugin">
+		<property name="users">
+			<list>
+				<ref bean="jmsUser" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="managementContext" class="org.apache.activemq.broker.jmx.ManagementContext">
+		<property name="createConnector" value="false" />
+	</bean>
+
+	<bean id="brokerService" class="org.apache.activemq.broker.BrokerService"
+		init-method="start" destroy-method="stop">
+		<property name="brokerName" value="pmsBroker" />
+		<property name="persistent" value="true" />
+		<property name="managementContext" ref="managementContext" />
+		<property name="transportConnectorURIs">
+			<list>
+				<value>tcp://${pms.jms.host}:${pms.jms.port}</value>
+			</list>
+		</property>
+		<property name="plugins">
+			<list>
+				<ref bean="simpleAuthPlugin" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQXAConnectionFactory">
+		<property name="brokerURL">
+			<value>tcp://${pms.jms.host}:${pms.jms.port}</value>
+		</property>
+		<property name="userName">
+			<value>${pms.jms.username}</value>
+		</property>
+		<property name="password">
+			<value>${pms.jms.password}</value>
+		</property>
+	</bean>
+	
+	<bean id="ftpService" class="com.pms.framework.FtpService" init-method="start" destroy-method="stop" />
+	
+	<bean id="ftpClientConfiguration" class="com.pms.framework.FtpClientConfigurationBiz"/>
+	
+	<bean id="ftpClientPool" class="com.pms.commons.ftp.FTPClientPool" depends-on="ftpClientConfiguration">
+		<constructor-arg ref="ftpClientConfiguration"/>
+	</bean>
+</beans>

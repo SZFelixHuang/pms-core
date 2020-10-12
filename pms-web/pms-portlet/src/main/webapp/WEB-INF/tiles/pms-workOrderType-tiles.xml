@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="workOrderTypeList" extends="pms.tiles">
+		<put-attribute name="title" value="WorkOrder Type List" />
+		<put-attribute name="body" value="/pages/workOrderType/workOrderTypeList.jsp" />
+	</definition>
+
+	<definition name="addWorkOrderType" extends="pms.tiles">
+		<put-attribute name="title" value="Add WorkOrder Type" />
+		<put-attribute name="body" value="/pages/workOrderType/workOrderTypeAdd.jsp" />
+	</definition>
+	
+	<definition name="editWorkOrderType" extends="pms.tiles">
+		<put-attribute name="title" value="Edit WorkOrder Type" />
+		<put-attribute name="body" value="/pages/workOrderType/workOrderTypeEdit.jsp" />
+	</definition>
+</tiles-definitions>

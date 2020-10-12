@@ -1,0 +1,190 @@
+#set($pageObjects = $renderRequest.getAttribute("pages"))
+#set($displayNum=15)
+#set($pages = $pageObjects.size() / $displayNum)
+#set($pages=$Integer.parseInt($pages))
+
+#if($pageObjects.size() > 0)
+	#if($pageObjects.size() % $displayNum == 0)
+		#if($pageObjects.size() < $displayNum)
+			#set($pages=1)
+		#end	
+	#else
+		#set($pages=$pages + 1)
+	#end
+#end
+
+<style type="text/css">
+#if($pages > 0)
+	#foreach($pageIndex in [1..$pages])
+		.pageCls$pageIndex 
+		{
+			#if($pageIndex > 1)
+			display:none;
+			#end
+		}	
+	#end
+#end
+</style>
+
+<script type="text/javascript">
+var pageClsClasses = new Array();
+#if($pages > 0)
+	#foreach($pageIndex in [1..$pages])
+		pageClsClasses[$pageIndex] = ".pageCls$pageIndex";
+	#end
+#end
+function doAdd()
+{
+	document.getElementById("list").style.display = "none";
+	document.getElementById("add").style.display = "block";
+}
+function goBack()
+{
+	document.location.href="/jetspeed";
+}
+function doEdit(pageName, pagePath)
+{
+	document.getElementById("list").style.display = "none";
+	document.getElementById("edit").style.display = "block";
+	var editPageName = document.getElementById("editPageName");
+	$("#editPageName").val(pageName);
+	$("#editPageName").attr("initValue", pageName)
+	$("#editPageForm").find("#pagePath").val(pagePath);
+}
+function goBackList()
+{
+	document.getElementById("list").style.display = "block";
+	document.getElementById("add").style.display = "none";
+	document.getElementById("edit").style.display = "none";
+}
+function doCreate()
+{
+	var $newPageForm = $("#newPageForm");
+	if(formDataFormatValidation($newPageForm))
+	{
+	   $newPageForm.submit();
+	}
+}
+function doUpdate()
+{
+	var $editPageForm = $("#editPageForm");
+	if(formDataFormatValidation($editPageForm))
+	{
+		if(formDataUpdatedValidation($editPageForm))
+		{
+		  pms.confirm(pms.NORMAL, "确认后，Page为[" + $("#editPageName").val() + "]的信息将会被更新入系统。确定要更新吗?", function ()
+    	  {
+			   $editPageForm.submit();
+          });
+		}
+		else
+		{
+		 	alert("当前没有信息被变更，不需要录入系统.");
+		}
+	}
+}
+function doDelete(pageName,pagePath)
+{
+	if(pagePath == "/default-page.psml")
+	{
+		alert("但不允许修改系统首页!", pms.DANGER);	
+		return;
+	}
+	$("#pageListForm").find("#pagePath").val(pagePath);
+    pms.confirm(pms.DANGER, "确定后，Page为["+pageName+"]将会被永久删除，不可恢复。确定要执行删除操作吗?", function ()
+  	{
+		$("#pageListForm").submit()
+  	});
+}
+function doPortletCustomize(pagePath)
+{
+	document.cookie="X-Portal-Path="+pagePath;
+	document.location.href="/jetspeed/portal/portletCustomizer.psml";
+}
+</script>
+<br/>
+<div id="list">
+	<div class="menu-bar" style="padding-right: 10px; padding-bottom: 10px;">
+	    <button class="btn btn-add" onclick="doAdd();"><span class="icon-plus"></span>新增</button><button class="btn btn-cancel" onclick="goBack();"><span class="icon-trash"></span>返回主页</button>
+	</div>
+	<form id="pageListForm" action="/jetspeed/pageManagerServlet" method="post">
+		<input type="hidden" name="action" value="delete"/>
+		<input type="hidden" id="pagePath" name="pagePath"/>
+		<table>
+			 <thead>
+			 	<th style="text-align:center">序号</th>
+			 	<th>page名称</th>
+			 	<th style="text-align:center">操作</th>
+			 </thead>
+			 #foreach($page in $pageObjects)
+				#set($temp=$velocityCount / $displayNum)
+				#set($temp=$Integer.parseInt($temp))
+				#if($velocityCount % $displayNum > 0)
+					#set($temp=$temp + 1)
+				#end
+			 	<tr id="page${velocityCount}" class="pageCls$temp" title="提示：双击鼠标左键，将会进入编辑页面" ondblclick="doEdit('${page.name}', '${page.url}');">
+			 		<td style="text-align:center">${velocityCount}</td>
+			 		<td style="text-align:left">${page.name}</td>
+			 		<td style="text-align:center">
+			 			<a href="javascript:doPortletCustomize('${page.url}');" title="提示：单击鼠标左键，将进入Portlet定制页面" style="margin-right: 10px;">
+			 				<span class="glyphicon glyphicon-th-large hover-icon" style="color:#333;text-decoration:none;"></span>
+			 			</a>
+			 			<a href="javascript:doDelete('${page.name}', '${page.url}');" title="提示：单击鼠标左键，将会提示是否删除【${page.name}】Page">
+			 				<span class="glyphicon glyphicon-remove hover-icon" style="color:#333;text-decoration:none;"></span>
+			 			</a>
+		 			</td>
+			 	</tr>
+			 #end
+		</table>
+	</form>
+	#if($pages > 0)
+	<div style="width:100%;">
+	<ul class="pagination">
+	    <li id="prev" class="disabled"><a href="javascript:pagenationPrevious()"><span class="icon-angle-left"></span></a></li>
+	#foreach($pageIndex in [1..$pages])
+		#if($velocityCount == 1)
+		    	<li id="pagenation1" class="active"><a href="javascript:pagenation($velocityCount);">$pageIndex</a></li>
+		#else
+		    	<li id="pagenation${velocityCount}"><a href="javascript:pagenation($velocityCount);">$pageIndex</a></li>
+		#end
+	#end
+	    <li id="next"><a href="javascript:pagenationNext()"><span class="icon-angle-right"></span></a></li>
+	</ul>
+	</div>
+	#end
+</div>
+<div id="add" style="display:none;">
+	<div class="menu-bar" style="padding-right: 10px; padding-bottom: 10px;">
+		<button class="btn btn-success" onclick="doCreate();"><span class="icon-ok"></span>提交</button><button class="btn btn-cancel" onclick="goBackList();"><span class="icon-trash"></span>返回上一级</button>
+	</div>
+	<form id="newPageForm" action="/jetspeed/pageManagerServlet" method="post">
+		<input type="hidden" name="action" value="add"/>
+		<div class="fieldUnit">
+			<div class="field-label">
+				Page名称:
+				<span class="glyphicon glyphicon-star required"></span>
+			</div>
+			<div class="field-element">
+				<input type="text" id="newPageName" name="pageName" required/>
+			</div>
+		</div>
+	</form>
+</div>
+<div id="edit" style="display:none;">
+	<div class="menu-bar" style="padding-right: 10px; padding-bottom: 10px;">
+		<button class="btn btn-success" onclick="doUpdate();"><span class="icon-ok"></span>更新</button><button class="btn btn-cancel" onclick="goBackList();"><span class="icon-trash"></span>返回上一级</button>
+	</div>
+	<form id="editPageForm" action="/jetspeed/pageManagerServlet" method="post">
+		<input type="hidden" name="action" value="edit"/>
+		<input type="hidden" id="pagePath" name="pagePath"/>
+		<div class="fieldUnit">
+			<div class="field-label">
+				Page名称:
+				<span class="glyphicon glyphicon-star required"></span>
+			</div>
+			<div class="field-element">
+				<input type="text" id="editPageName" name="pageName" required/>
+			</div>
+		</div>
+	</form>
+</div>

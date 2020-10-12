@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="systemAccountList" extends="pms.tiles">
+		<put-attribute name="title" value="System Account List" />
+		<put-attribute name="body" value="/pages/systemAccount/systemAccountList.jsp" />
+	</definition>
+
+    <definition name="editSystemAccount" extends="pms.tiles">
+        <put-attribute name="title" value="Edit System Account" />
+        <put-attribute name="body" value="/pages/systemAccount/systemAccountEdit.jsp" />
+    </definition>
+
+    <definition name="addSystemAccount" extends="pms.tiles">
+        <put-attribute name="title" value="Edit System Account" />
+        <put-attribute name="body" value="/pages/systemAccount/systemAccountAdd.jsp" />
+    </definition>
+</tiles-definitions>

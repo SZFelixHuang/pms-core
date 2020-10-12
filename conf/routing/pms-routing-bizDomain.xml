@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+	<camel:routeContext id="Routing-bizDomain-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:deleteBizDomainWithReturn"/>
+			  <camel:setHeader headerName="agency">
+            	<camel:simple>${body[0]}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader headerName="bizDomainId">
+            	<camel:simple>${body[1]}</camel:simple>
+            </camel:setHeader>
+            <camel:bean ref="bizDomainDAO" method = "searchByPK(${header.bizDomainId})"/>
+			<camel:setHeader headerName="bizdomain">
+				<camel:simple>${body.bizdomain}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="bizDomainValueDAO" method="deleteBizDomainValueByBizDomainName(${header.agency}, ${header.bizdomain})"/>
+          	<camel:bean ref="bizDomainDAO" method="removeByPK(${header.bizDomainId})"/>	
+            <camel:bean ref="bizDomainDAO" method="searchByAgency(${header.agency})"/>
+		</camel:route>
+	 	<camel:route>
+            <camel:from uri="direct:batchDeleteBizDomainsWithReturn"/>
+            <camel:setHeader headerName="agency">
+            	<camel:simple>${body[0]}</camel:simple>
+            </camel:setHeader>
+            <camel:setHeader headerName="bizDomainIds">
+            	<camel:simple>${body[1]}</camel:simple>
+            </camel:setHeader>
+           	<camel:setHeader headerName="loopSize">
+                <camel:simple>${header.bizDomainIds.length}</camel:simple>
+           	</camel:setHeader>
+           	<camel:loop>
+			  	<camel:header>loopSize</camel:header>
+                <camel:setHeader headerName="bizDomainId">
+                    <camel:simple>${header.bizDomainIds[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+                </camel:setHeader>
+                <camel:bean ref="bizDomainDAO" method = "searchByPK(${header.bizDomainId})"/>
+               	<camel:setHeader headerName="bizdomain">
+					<camel:simple>${body.bizdomain}</camel:simple>
+				</camel:setHeader>
+				<camel:bean ref="bizDomainValueDAO" method="deleteBizDomainValueByBizDomainName(${header.agency}, ${header.bizdomain})"/>
+          		<camel:bean ref="bizDomainDAO" method="removeByPK(${header.bizDomainId})"/>	
+			</camel:loop>	
+            <camel:bean ref="bizDomainDAO" method="searchByAgency(${header.agency})"/>
+        </camel:route>
+	</camel:routeContext>
+</beans>

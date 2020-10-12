@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+
+	<import resource="routing/pms-routing-*.xml" />
+
+	<bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="testConnectionOnStartup" value="true" />
+		<property name="concurrentConsumers">
+			<value>${pms.jms.concurrentConsumers}</value>
+		</property>
+		<property name="maxConcurrentConsumers">
+			<value>${pms.jms.maxConcurrentConsumers}</value>
+		</property>
+		<property name="transacted" value="${pms.jms.transacted}" />
+		<property name="transactionManager" ref="jtaTransactionManager" />
+	</bean>
+
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="configuration" ref="jmsConfig" />
+	</bean>
+
+	<bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+		<property name="transactionManager" ref="jtaTransactionManager" />
+		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
+	</bean>
+
+	<!-- Processors bean configuration -->
+	<bean id="jmsMessageInProcessor" class="com.pms.routing.processor.JmsMessageInProcessor" />
+
+	<bean id="jmsMessageOutProcessor" class="com.pms.routing.processor.JmsMessageOutProcessor" />
+
+	<bean id="routingErrorProcessor" class="com.pms.routing.processor.RoutingErrorProcessor" />
+	
+	<bean id="modelInstanceGenerator" class="com.pms.routing.util.ModelInstanceGenerator"/>
+
+	<camelContext id="mainCamelContext" xmlns="http://camel.apache.org/schema/spring">
+
+		<camel:contextScan />
+		
+		<camel:routeContextRef ref="Routing-SystemAccount-Module" />
+
+		<camel:routeContextRef ref="Routing-Agency-Module" />
+
+		<camel:routeContextRef ref="Routing-Role-Module" />
+
+		<camel:routeContextRef ref="Routing-Group-Module" />
+
+		<camel:routeContextRef ref="Routing-bizDomain-Module" />
+
+		<camel:routeContextRef ref="Routing-bizDomainValue-Module" />
+
+		<camel:routeContextRef ref="Routing-activiti-Module" />
+		
+		<camel:routeContextRef ref="Routing-workOrderStatus-Module" />
+		
+		<camel:routeContextRef ref="Routing-workflow-Module"/>
+		
+		<camel:routeContextRef ref="Routing-workOrderType-Module"/>
+		
+		<camel:routeContextRef ref="Routing-workOrder-Module"/>
+		
+		<camel:routeContextRef ref="Routing-customizedForm-Module"/>
+		
+		<camel:routeContextRef ref="Routing-documentations-Module"/>
+		
+		<camel:routeContextRef ref="Routing-material-Module"/>
+		
+		<camel:routeContextRef ref="Routing-brand-Module"/>
+		
+		<camel:routeContextRef ref="Routing-service-Module"/>
+		
+		<camel:routeContextRef ref="Routing-serviceMapping-Module"/>
+		
+		<camel:routeContextRef ref="Routing-materialRepository-Module"/>
+		
+		<camel:routeContextRef ref="Routing-serialNumber-Module"/>
+		
+		<camel:routeContextRef ref="Routing-dailyService-Module"/>
+		
+		<camel:routeContextRef ref="Routing-department-Module"/>
+		
+		<camel:onException>
+			<camel:exception>java.lang.Exception</camel:exception>
+			<camel:handled>
+				<camel:constant>false</camel:constant>
+			</camel:handled>
+			<camel:process ref="routingErrorProcessor" />
+			<camel:rollback />
+			<camel:stop />
+		</camel:onException>
+
+		<camel:route id="authenticationQueue">
+			<camel:from uri="activemq:queue:authenticationQueueBefore" />
+			<camel:transacted ref="PROPAGATION_REQUIRED" />
+			<camel:bean ref="jmsMessageInProcessor" />
+			<camel:toD uri="${header.routingURI}" />
+			<camel:bean ref="jmsMessageOutProcessor" />
+		</camel:route>
+
+		<camel:route id="systemQueue">
+			<camel:from uri="activemq:queue:systemQueueBefore" />
+			<camel:transacted ref="PROPAGATION_REQUIRED" />
+			<camel:bean ref="jmsMessageInProcessor" />
+			<camel:toD uri="${header.routingURI}" />
+			<camel:bean ref="jmsMessageOutProcessor" />
+		</camel:route>
+	</camelContext>
+</beans>

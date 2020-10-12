@@ -1,0 +1,346 @@
+#set($page = $renderRequest.getAttribute("page"))
+#set($currentLayoutId = $renderRequest.getAttribute("currentLayoutId"))
+#set($currentLayoutName = $renderRequest.getAttribute("currentLayoutName"))
+#set($currentLayoutSizes = $renderRequest.getAttribute("currentLayoutSizes"))
+#set($currentLayoutColumns = $renderRequest.getAttribute("currentLayoutColumns"))
+#set($layoutList =  $renderRequest.getAttribute("layoutList"))
+#set($totalRows =  $renderRequest.getAttribute("totalRows"))
+
+<style type="text/css">
+table
+{
+	width:100%;
+}
+tr
+{
+	background-color:transparent !important;
+}
+tr:hover > td {
+	background-color:transparent !important;
+}
+.portletView
+{
+    width:100%;
+    height:30px;
+    border-radius: 4px;
+    background-color:#E7EBEC;
+    line-height:30px;
+    text-align:left;
+    padding: 0px 10px;
+    margin: 10px 0px;
+    display:inline-block;
+}
+.portletView>span
+{
+     font-weight: bold;
+}
+.portlet_operation
+{
+    display:inline-block;
+    float:right;
+}
+.portlet_operation>span
+{
+    padding-left:10px;
+    line-height:30px;
+}
+
+.portletReview
+{
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right:10px;
+}
+.portletReviewLable
+{
+    margin-left: 5px;
+}
+td
+{
+    padding: 0px 5px;
+}
+</style>
+<form action="" method="get"></form>
+<div class="fieldUnit">
+    <div class="field-label">
+        Page:
+    </div>
+    <div class="field-element">
+        <input type="text" value="${page.name}" disabled/>
+    </div>
+</div>
+<div class="fieldUnit">
+    <div class="field-label">
+        Portlet布局:
+    </div>
+    <div class="field-element">
+        <select id="layouts" onchange="layoutChange()">
+            #foreach($item in $layoutList)
+            #if(${item.name} == $currentLayoutName)
+                <option value="${item.name}" selected="selected">${item.displayName}</option>
+            #else
+                <option value="${item.name}">${item.displayName}</option>
+            #end
+        #end
+        </select>
+    </div>
+</div>
+<div class="fieldUnit" style="float:right;">
+    <div class="field-label"></div>
+    <div class="field-element">
+        <div class="menu-bar" style="padding-right: 10px;">
+            <button class="btn btn-add" onclick="doAddPortlet();"><span class="icon-plus"></span>Portlet</button><button class="btn btn-cancel" onclick="goBack();"><span class="icon-trash"></span>返回上一级</button>
+        </div>
+    </div>
+</div>
+#if($page.portlets && $page.portlets.size() > 0)
+<div class="portletReview">
+    <div class="portletReviewLable">Portlets布局预览:</div>
+	<table id="portletTable">
+		<tbody>
+                #foreach($rowNum in [1..$totalRows])
+				<tr id="portletRow$rowNum">
+					#foreach($colSize in $currentLayoutSizes)
+						<td id="portletCol-${rowNum}-${velocityCount}" style="width :$colSize"></td>
+					#end
+				</tr>
+				#end
+		</tbody>
+	</table>
+</div>
+#end
+
+<script type="text/javascript">
+	function goBack()
+	{
+        $("form").attr("action", "/jetspeed/portal/pageCustomizer.psml").submit();
+	}
+	function doAddPortlet()
+	{
+		document.cookie="maxRow=$totalRows";
+        $("form").attr("action", "/jetspeed/portal/selector.psml").submit();
+	}
+	function doDeletePortlet(contentFragmentId)
+	{
+        var arr,reg=new RegExp("(^| )acAuth=([^;]*)(;|$)");
+        if(arr=document.cookie.match(reg))
+        {
+	        var url = "/jetspeed/services/pagelayout/fragment/" + contentFragmentId + "/?_type=json&acAuth=" + unescape(arr[2]);
+			reg=new RegExp("(^| )X-Portal-Path=([^;]*)(;|$)");
+			if(arr=document.cookie.match(reg))
+			{
+		        $.ajax({
+		                url: url,
+		                headers: {
+		                    "X-Portal-Path": unescape(arr[2])
+		                },
+		                type: "delete",
+		                success: function (data) {
+		                    window.location.href = "/jetspeed/portal/portletCustomizer.psml";
+		                }
+		            });            
+			}
+        }
+	}
+	function doMove(direction, tdId, contentFragmentId)
+	{
+        var sync = "done";
+        var actionFn = function(contentFragmentId, row, col, refresh)
+        {
+            var innerAction = function(contentFragmentId, row, col, refresh)
+            {
+                var arr,reg=new RegExp("(^| )acAuth=([^;]*)(;|$)");
+                if(arr=document.cookie.match(reg))
+                {
+                    var url = "/jetspeed/services/pagelayout/fragment/" + contentFragmentId + "/pos/?_type=json&acAuth=" + unescape(arr[2]) + "&col=" + col + "&row=" + row;
+                    reg=new RegExp("(^| )X-Portal-Path=([^;]*)(;|$)");
+                    if(arr=document.cookie.match(reg))
+                    {
+                        sync = "inProcess";
+                        $.ajax({
+                                url: url,
+                                headers: {
+                                    "X-Portal-Path": unescape(arr[2])
+                                },
+                                type: "PUT",
+                                success: function (data) 
+                                {
+                                    sync = "done";
+                                    if(refresh)
+                                    {
+                                        window.location.href = "/jetspeed/portal/portletCustomizer.psml";
+                                    }
+                                }
+                            });
+                    }            
+                }
+            };
+            if(sync == "done")
+            {
+                innerAction(contentFragmentId, row, col, refresh);
+            }
+            else
+            {
+              setTimeout(function(){
+                  innerAction(contentFragmentId, row, col, refresh);
+              }, 100);
+            }
+        }
+        
+        var targetRow, targetCol, targetContentFragmentId;
+        tdId = tdId.replace("portletCol-", "");
+        var row = parseInt(tdId.split("-")[0]);
+        var col = parseInt(tdId.split("-")[1]);
+        if(direction == 'down')
+        {
+            var colPos = positionMap[row-1];
+            for(index = col; index < colPos.length; index++)
+            {
+            	targetCol = document.getElementById("portletCol-" + row + "-" + colPos[index]);
+            	if(targetCol)
+            	{
+            		targetRow = (row - 1)
+            		targetContentFragmentId  = $(targetCol).find("div.portletView:first").attr("contentFragmentId");
+                    actionFn(targetContentFragmentId, targetRow, targetCol - 1, false);
+            	}
+            }
+            
+            //move itself to start location of next row
+            targetRow = row;
+            targetCol = 0;
+            targetContentFragmentId = contentFragmentId;
+            actionFn(targetContentFragmentId, targetRow, targetCol, false);
+            
+            //move first portlet of next row to end location of current row
+            targetRow = row - 1;
+            targetCol = positionMap[targetRow].length - 1;
+            targetContentFragmentId = $("#portletCol-" + (row + 1) + "-1").find("div.portletView:first").attr("contentFragmentId");
+            actionFn(targetContentFragmentId, targetRow, targetCol, true);
+        }
+        else if(direction == 'up')
+        {
+            var colPos = positionMap[row-1];
+            for(index = 0; index < (col - 1); index++)
+            {
+            	var targetColObj = document.getElementById("portletCol-" + row + "-" + colPos[index]);
+            	if(targetColObj)
+            	{
+            		targetRow = (row - 1);
+            		targetCol = colPos[index];
+            		targetContentFragmentId  = $(targetColObj).find("div.portletView:first").attr("contentFragmentId");
+                    actionFn(targetContentFragmentId, targetRow, targetCol, false);
+            	}
+            }
+            
+            //move last portlet of previous row to start location of current row
+            targetRow = row - 1;
+            targetCol = 0;
+            targetContentFragmentId = $("#portletCol-" + (row - 1) + "-" + positionMap[row - 2].length).find("div.portletView:first").attr("contentFragmentId");
+            actionFn(targetContentFragmentId, targetRow, targetCol, false);
+        
+            //move itself to end location of previous row
+            targetRow = row - 2;
+            targetCol = positionMap[targetRow].length - 1;
+            targetContentFragmentId = contentFragmentId;
+            actionFn(targetContentFragmentId, targetRow, targetCol, true);
+        }
+        else if(direction == 'left')
+        {
+            targetRow = row - 1;
+            targetCol = col - 2;
+            targetContentFragmentId = contentFragmentId;
+            if(positionMap[targetRow].length >= col)
+            {
+                actionFn(targetContentFragmentId, targetRow, targetCol, false);
+            }
+            else
+            {
+                actionFn(targetContentFragmentId, targetRow, targetCol, true);
+            }
+            
+            targetCol = col -1;
+            if(positionMap[targetRow].length >= col)
+            {
+                targetContentFragmentId = $("#portletCol-"+ row + "-" + (col - 1)).find("div.portletView:first").attr("contentFragmentId");
+                actionFn(targetContentFragmentId, targetRow, targetCol, true);
+            } 
+        }
+        else if(direction == 'right')
+        {
+            targetRow = row - 1;
+            targetCol = col;
+            targetContentFragmentId = contentFragmentId;
+            if(positionMap[targetRow].length > col)
+            {
+                actionFn(targetContentFragmentId, targetRow, targetCol, false);
+            }
+            else
+            {
+                actionFn(targetContentFragmentId, targetRow, targetCol, true);
+            }
+            targetCol = col -1;
+            if(positionMap[targetRow].length > col)
+            {
+                targetContentFragmentId = $("#portletCol-"+ row + "-" + (col + 1)).find("div.portletView:first").attr("contentFragmentId");
+                actionFn(targetContentFragmentId, targetRow, targetCol, true);
+            }
+        }
+	}
+	function layoutChange()
+    {
+    	var selectedValue = $('#layouts option:selected') .val();
+        var url = "/jetspeed/portletManagerServlet?action=layoutUpdate&layout="+selectedValue+"&pagePath=$page.url";
+        $.post(url, function(data) 
+        {
+        	 window.location.href = "/jetspeed/portal/portletCustomizer.psml";
+        });
+    }
+    var totalRows = parseInt('$totalRows');
+    function createPortlet(contentFragmentId, portletName, row, col)
+    {
+        row = parseInt(row) + 1;
+        col = parseInt(col) + 1;
+        var tbody = $("#portletTable").find("tbody:first");
+        var targetRow = $("#portletRow"+row);
+        var targetCol = $("#portletCol-"+ row + "-" + col);
+        targetCol.append("<div class='portletView' contentFragmentId='" + contentFragmentId + "'><span>"+portletName+"</span></div>");
+        var currentPortletView = targetCol.find("DIV[class=portletView]").first();
+        currentPortletView.append("<div class='portlet_operation'></div>");
+        var currentPortletOperaion = currentPortletView.find("DIV[class=portlet_operation]").first();
+        if(col > 1)
+        {
+            currentPortletOperaion.append("<span onclick=\"doMove('left','" + targetCol.attr('id') + "', '" + contentFragmentId + "')\"  class='icon-arrow-left hover-icon'></span>");
+        }
+        if(row > 1)
+        {
+            currentPortletOperaion.append("<span onclick=\"doMove('up','" + targetCol.attr('id') + "', '" + contentFragmentId + "')\"  class='icon-arrow-up hover-icon'></span>");
+        }
+        if(row < totalRows)
+        {
+            currentPortletOperaion.append("<span onclick=\"doMove('down','" + targetCol.attr('id') + "', '" + contentFragmentId + "')\" class='icon-arrow-down hover-icon'></span>");
+        }
+        if(col <  $currentLayoutColumns && parseInt($page.portlets.size()) > 1)
+        {
+            currentPortletOperaion.append("<span onclick=\"doMove('right','" + targetCol.attr('id') + "', '" + contentFragmentId + "')\"  class='icon-arrow-right hover-icon'></span>");
+        }
+        currentPortletOperaion.append("<span onclick=\"doDeletePortlet('" + contentFragmentId + "');\" class='icon-remove hover-icon'></span>");
+    }
+    
+    #if($page.portlets && $page.portlets.size() > 0)
+        #foreach($portlet in $page.portlets)
+            createPortlet('${portlet.contentFragmentId}', '${portlet.displayName}', ${portlet.rowLocation}, ${portlet.colLocation});
+        #end
+    #end
+    
+    var positionMap = new Array();
+    for(indexRow = 1; indexRow <= totalRows; indexRow++)
+    {
+        positionMap[indexRow - 1] = new Array(); 
+        $("#portletRow" + indexRow).find("td[id*=portletCol-" + indexRow + "-]").each(function(index){
+            if(this.innerHTML)
+            {
+                positionMap[indexRow - 1][index] = parseInt(this.id.replace("portletCol-" + indexRow + "-", ""));
+            }
+        });
+    }
+</script>

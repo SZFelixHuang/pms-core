@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="customizedFormMapping" extends="pms.tiles">
+		<put-attribute name="title" value="Customized Form Mapping" />
+		<put-attribute name="body" value="/pages/customizeForm/customizedFormMapping.jsp" />
+	</definition>
+</tiles-definitions>

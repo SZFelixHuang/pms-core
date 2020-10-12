@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+	
+	<camel:routeContext id="Routing-serialNumber-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:createSerialNumber"/>
+			<camel:setHeader headerName="constituents">
+				<camel:simple>${body[0].constituents}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0].agency}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="serialNumberDAO" method="saveOrUpdate(${body[0]})"/>
+			<camel:setHeader headerName="serialNumberId">
+				<camel:simple>${body.id}</camel:simple>
+			</camel:setHeader>
+			<camel:filter>
+				<camel:simple>${header.constituents} != null</camel:simple>
+	            <camel:setHeader headerName="loopSize">
+	                <camel:simple>${header.constituents.size}</camel:simple>
+	            </camel:setHeader>
+	            <camel:loop>
+				  	<camel:header>loopSize</camel:header>
+	                <camel:setHeader headerName="currentConstituent">
+	                    <camel:simple>${header.constituents[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+	                </camel:setHeader>
+	                <camel:transform>
+	                	<camel:javaScript>request.headers.get('currentConstituent').agency = request.headers.get('agency')</camel:javaScript>
+	                </camel:transform>
+	                <camel:transform>
+	                	<camel:javaScript>request.headers.get('currentConstituent').parentId = request.headers.get('serialNumberId')</camel:javaScript>
+	                </camel:transform>
+					<camel:bean ref="serialNumberDAO" method="saveOrUpdate(${header.currentConstituent})"/>
+				</camel:loop>
+			</camel:filter>
+			<camel:setBody>
+				<camel:javaScript>[request.headers.get('serialNumberId')]</camel:javaScript>
+			</camel:setBody>
+			<camel:toD uri="direct:getSerialNumberById"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getSerialNumberById"/>
+			<camel:bean ref="serialNumberDAO" method="searchByPK(${body[0]})"/>
+			<camel:setHeader headerName="serialNumberModel">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="modelInstanceGenerator" method="getInstance('SerialNumberModel')"/>
+			<camel:setHeader headerName="searchModel">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('searchModel').agency = request.headers.get('serialNumberModel').agency</camel:javaScript>
+			</camel:transform>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('searchModel').parentId = request.headers.get('serialNumberModel').id</camel:javaScript>
+			</camel:transform>
+			<camel:bean ref="serialNumberDAO" method="searchByModel(${header.searchModel})"/>
+			<camel:setHeader headerName="constituents">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('serialNumberModel').constituents = request.headers.get('constituents')</camel:javaScript>
+			</camel:transform>
+			<camel:setBody>
+				<camel:simple>${header.serialNumberModel}</camel:simple>
+			</camel:setBody>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getSerialNumberByCategory"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="category">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="modelInstanceGenerator" method="getInstance('SerialNumberModel')"/>
+			<camel:setHeader headerName="searchModel">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('searchModel').agency = request.headers.get('agency')</camel:javaScript>
+			</camel:transform>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('searchModel').category = request.headers.get('category')</camel:javaScript>
+			</camel:transform>
+			<camel:bean ref="serialNumberDAO" method="searchByModel(${header.searchModel})"/>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.size} > 0</camel:simple>
+					<camel:setBody>
+						<camel:javaScript>[request.body.get(0).id]</camel:javaScript>
+					</camel:setBody>
+					<camel:toD uri="direct:getSerialNumberById"/>
+				</camel:when>
+				<camel:otherwise>
+					<camel:setBody>
+						<camel:simple>null</camel:simple>
+					</camel:setBody>
+				</camel:otherwise>
+			</camel:choice>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteSerialNumber"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="serialNumberId">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:multicast parallelProcessing="true" stopOnException="true">
+				<camel:bean ref="serialNumberDAO" method="removeByPK(${header.serialNumberId})"/>
+				<camel:bean ref="serialNumberDAO" method="deleteSerialNumberConstituents(${header.serialNumberId})"/>
+			</camel:multicast>
+			<camel:bean ref="serialNumberDAO" method="getSerialNumbers(${header.agency})"/>
+		</camel:route>
+	</camel:routeContext>
+</beans>

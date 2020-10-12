@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+						
+	<camel:routeContext id="Routing-workOrder-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:getWorkOrders"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="workOrderDAO" method="searchByAgency(${body[0]}, ${body[1]})"/>
+			<camel:setHeader headerName="pageObject">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="workOrders">
+				<camel:simple>${header.pageObject.resultList}</camel:simple>
+			</camel:setHeader>
+		   	<camel:setHeader headerName="workOrderLoopSize">
+               	<camel:simple>${header.workOrders.size}</camel:simple>
+           	</camel:setHeader>
+           	<camel:loop>
+				<camel:header>workOrderLoopSize</camel:header>
+				<camel:setHeader headerName="currentWorkOrder">
+                   	<camel:simple>${header.workOrders[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+              	</camel:setHeader>
+              	<camel:multicast parallelProcessing="false" stopOnException="true">
+	 				<camel:toD uri="direct:setCarInfo"/>
+	            	<camel:toD uri="direct:setGisLocations"/>
+              	</camel:multicast>
+			</camel:loop>
+			<camel:setBody>
+				<camel:simple>${header.pageObject}</camel:simple>
+			</camel:setBody>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:setCarInfo"/>
+           	<camel:bean ref="carOwnerDAO" method="getcarOwnerByWorkOrderId(${header.currentWorkOrder.workOrderId})"/>
+        	<camel:setHeader headerName="carOwner">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:transform>
+			 	<camel:javaScript>request.headers.get('currentWorkOrder').carOwner = request.headers.get('carOwner')</camel:javaScript>
+			</camel:transform>
+            <camel:bean ref="carDAO" method="searchByPK(${header.carOwner.carId})"/>
+            <camel:setHeader headerName="car">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+            <camel:transform>
+            	<camel:javaScript>request.headers.get('currentWorkOrder').car = request.headers.get('car')</camel:javaScript>
+            </camel:transform>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:setGisLocations"/>
+	      	<camel:bean ref="modelInstanceGenerator" method="getInstance('GisLocationModel')"/>
+            <camel:setHeader headerName="gisLocationSearchModel">
+            	<camel:simple>${body}</camel:simple>
+            </camel:setHeader>
+            <camel:transform>
+            	<camel:javaScript>request.headers.get('gisLocationSearchModel').agency = request.headers.get('agency')</camel:javaScript>
+            </camel:transform>
+			<camel:transform>
+             		<camel:javaScript>request.headers.get('gisLocationSearchModel').locationCategory = 'workOrder'</camel:javaScript>
+			</camel:transform>              	
+			<camel:transform>
+             		<camel:javaScript>request.headers.get('gisLocationSearchModel').locationType = 'takeCarAddress'</camel:javaScript>
+			</camel:transform>              	
+			<camel:transform>
+             		<camel:javaScript>request.headers.get('gisLocationSearchModel').key1 = request.headers.get('currentWorkOrder').workOrderId</camel:javaScript>
+			</camel:transform>              	
+            <camel:bean ref="gisLocationDAO" method="searchByModel(${header.gisLocationSearchModel})"/>
+			<camel:filter>
+				<camel:simple>${body.size} > 0</camel:simple>
+				<camel:setHeader headerName="takeCarAddress">
+					<camel:simple>${body.get(0)}</camel:simple>
+				</camel:setHeader>
+				<camel:transform>
+					<camel:javaScript>request.headers.get('currentWorkOrder').takeCarAddress = request.headers.get('takeCarAddress')</camel:javaScript>
+				</camel:transform>
+			</camel:filter>    
+			<camel:transform>
+             		<camel:javaScript>request.headers.get('gisLocationSearchModel').locationType = 'returnCarAddress'</camel:javaScript>
+			</camel:transform>           	
+            <camel:bean ref="gisLocationDAO" method="searchByModel(${header.gisLocationSearchModel})"/>
+			<camel:filter>
+				<camel:simple>${body.size} > 0</camel:simple>
+				<camel:setHeader headerName="returnCarAddress">
+					<camel:simple>${body.get(0)}</camel:simple>
+				</camel:setHeader>
+				<camel:transform>
+					<camel:javaScript>request.headers.get('currentWorkOrder').returnCarAddress = request.headers.get('returnCarAddress')</camel:javaScript>
+				</camel:transform>
+			</camel:filter>	
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:createWorkOrder"/>
+			<camel:setHeader headerName="workOrder">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:multicast parallelProcessing="false" stopOnException="true">
+				<camel:bean ref="workOrderDAO" method="saveOrUpdate(${header.workOrder})"/>
+				<camel:toD uri="direct:createCarInfo"/>
+				<camel:toD uri="direct:createWorkOrderDailyServices"/>
+			</camel:multicast>
+			<camel:bean ref="modelInstanceGenerator" method="getInstance('WorkOrderTypeModel')"/>
+			<camel:setHeader headerName="searchModel">
+				<camel:simple>${body}</camel:simple>
+			</camel:setHeader>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('searchModel').agency = request.headers.get('workOrder').agency</camel:javaScript>
+			</camel:transform>
+			<camel:transform>
+				<camel:javaScript>request.headers.get('searchModel').name = request.headers.get('workOrder').workOrderType</camel:javaScript>
+			</camel:transform>
+			<camel:bean ref="workOrderTypeDAO" method="searchByModel(${header.searchModel})"/>
+			<camel:filter>
+				<camel:simple>${body.size} == 1 and ${body.get(0).enable} and ${body.get(0).workFlowTypeName} != null</camel:simple>
+				<camel:setBody>
+					<camel:javaScript>[request.body.get(0).agency, request.body.get(0).workFlowTypeName, request.headers.get('workOrder').workOrderId]</camel:javaScript>
+				</camel:setBody>				
+				<camel:toD uri="direct:startWorkflow"/>
+			</camel:filter>
+			<camel:setBody>
+				<camel:simple>${header.workOrder}</camel:simple>
+			</camel:setBody>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:createWorkOrderDailyServices"/>
+			<camel:filter>
+				<camel:simple>${header.workOrder.dailyServices} != null</camel:simple>
+				<camel:setBody>
+					<camel:javaScript>[request.headers.get('workOrder').agency,request.headers.get('workOrder').workOrderId, request.headers.get('workOrder').dailyServices]</camel:javaScript>
+				</camel:setBody>
+				<camel:toD uri="direct:createDailyServices"/>
+			</camel:filter>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:createCarInfo"/>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.workOrder.carOwner.carId} != null</camel:simple>
+					<camel:multicast parallelProcessing="true" stopOnException="true">
+						<camel:toD uri="direct:saveCarOwner"/>
+						<camel:toD uri="direct:saveCar"/>
+					</camel:multicast>
+				</camel:when>
+				<camel:otherwise>
+						<camel:toD uri="direct:saveCar"/>
+						<camel:toD uri="direct:saveCarOwner"/>
+				</camel:otherwise>
+			</camel:choice>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:saveCarOwner"/>	
+			<camel:filter>
+				<camel:simple>${header.workOrder.carOwner} != null</camel:simple>
+				<camel:transform>
+					<camel:javaScript>request.headers.get('workOrder').carOwner.agency = request.headers.get('workOrder').agency</camel:javaScript>
+				</camel:transform>
+				<camel:transform>
+					<camel:javaScript>request.headers.get('workOrder').carOwner.workOrderId = request.headers.get('workOrder').workOrderId</camel:javaScript>
+				</camel:transform>
+				<camel:transform>
+					<camel:javaScript>request.headers.get('workOrder').carOwner.carId = request.headers.get('workOrder').car.id</camel:javaScript>
+				</camel:transform>
+				<camel:bean ref="carOwnerDAO" method="saveOrUpdate(${header.workOrder.carOwner})"/>
+			</camel:filter>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:saveCar"/>
+			<camel:filter>
+				<camel:simple>${header.workOrder.car} != null</camel:simple>
+				<camel:choice>
+					<camel:when>
+						<camel:simple>${header.workOrder.car.id} == null</camel:simple>
+						<camel:bean ref="carDAO" method="getCarByCarNum(${header.workOrder.agency}, ${header.workOrder.car.carNum})"/>
+					</camel:when>
+					<camel:otherwise>
+						<camel:bean ref="carDAO" method="searchByPK(${header.workOrder.car.id})"/>
+					</camel:otherwise>
+				</camel:choice>
+				<camel:choice>
+					<camel:when>
+						<camel:simple>${body} == null</camel:simple>
+						<camel:transform>
+							<camel:javaScript>request.headers.get('workOrder').car.agency = request.headers.get('workOrder').agency</camel:javaScript>
+						</camel:transform>
+						<camel:bean ref="carDAO" method="saveOrUpdate(${header.workOrder.car})"/>
+					</camel:when>
+					<camel:otherwise>
+						<camel:setHeader headerName="car">
+							<camel:simple>${body}</camel:simple>
+						</camel:setHeader>
+						<camel:transform>
+							<camel:javaScript>request.headers.get('workOrder').car = request.headers.get('car')</camel:javaScript>
+						</camel:transform>
+					</camel:otherwise>
+				</camel:choice>
+			</camel:filter>			
+		</camel:route>
+	</camel:routeContext>
+</beans>

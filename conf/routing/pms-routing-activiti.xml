@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+
+	<bean id="activitiModelConverter"
+		class="com.pms.routing.processor.ActivitiModelConverterProcessor" />
+
+	<bean id="activitiEngineModelConverter"
+		class="com.pms.routing.processor.ActivitiEngineModelConverterProcessor" />
+
+	<bean id="activitiQuery" class="com.pms.routing.processor.ActivitiQueryProcessor" />
+
+	<bean id="activitiDeploymentProcessor" class="com.pms.routing.processor.ActivitiDeploymentProcessor" />
+	
+	<bean id="startProcessInstanceProcessor" class="com.pms.routing.processor.StartProcessInstanceProcessor" />
+	
+	<bean id="taskQueryProcessor" class="com.pms.routing.processor.TaskQueryProcessor" />
+
+	<camel:routeContext id="Routing-activiti-Module"
+		xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:getActivitiModel" />
+			<camel:bean ref="repositoryService" method="getModel(${body[0]})" />
+			<camel:process ref="activitiModelConverter" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:saveActivitiModel" />
+			<camel:process ref="activitiEngineModelConverter" />
+			<camel:bean ref="repositoryService" method="saveModel" />
+			<camel:process ref="activitiModelConverter" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:addModelEditorSource" />
+			<camel:bean ref="repositoryService"
+				method="addModelEditorSource(${body[0]},${body[1]})" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:addModelEditorSourceExtra" />
+			<camel:bean ref="repositoryService"
+				method="addModelEditorSourceExtra(${body[0]},${body[1]})" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getModelEditorSource" />
+			<camel:bean ref="repositoryService" method="getModelEditorSource(${body[0]})" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:newActivitiModel" />
+			<camel:bean ref="repositoryService" method="newModel" />
+			<camel:process ref="activitiModelConverter" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getActivitiModelsByAgency" />
+			<camel:setHeader headerName="queryChannel">
+				<camel:constant>modelTenantId</camel:constant>
+			</camel:setHeader>
+			<camel:setHeader headerName="queryParameter">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="orderBy">
+				<camel:constant>orderByLastUpdateTime</camel:constant>
+			</camel:setHeader>
+			<camel:bean ref="repositoryService" method="createModelQuery" />
+			<camel:bean ref="activitiQuery" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getDeployedActivitiModelsByAgency" />
+			<camel:setHeader headerName="queryChannel">
+				<camel:constant>modelTenantId</camel:constant>
+			</camel:setHeader>
+			<camel:setHeader headerName="queryParameter">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="orderBy">
+				<camel:constant>orderByLastUpdateTime</camel:constant>
+			</camel:setHeader>
+			<camel:setHeader headerName="onlyDeployed">
+				<camel:constant>true</camel:constant>
+			</camel:setHeader>
+			<camel:bean ref="repositoryService" method="createModelQuery" />
+			<camel:bean ref="activitiQuery" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deployActiviti" />
+			<camel:process ref="activitiDeploymentProcessor" />
+			<camel:setBody>
+				<camel:simple>${body.id}</camel:simple>
+			</camel:setBody>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteActiviti" />
+			<camel:bean ref="repositoryService" method="getModel(${body[0]})" />
+			<camel:filter>
+				<camel:simple>${body.deploymentId} != null</camel:simple>
+				<camel:bean ref="repositoryService" method="deleteDeployment(${body.deploymentId})" />
+			</camel:filter>
+			<camel:bean ref="repositoryService" method="deleteModel(${body.id})" />
+			<camel:setHeader headerName="queryChannel">
+				<camel:constant>modelTenantId</camel:constant>
+			</camel:setHeader>
+			<camel:setHeader headerName="queryParameter">
+				<camel:simple>${body.tenantId}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="orderBy">
+				<camel:constant>orderByLastUpdateTime</camel:constant>
+			</camel:setHeader>
+			<camel:bean ref="repositoryService" method="createModelQuery" />
+			<camel:bean ref="activitiQuery" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:deleteDeployment" />
+			<camel:bean ref="repositoryService" method="deleteDeployment(${body[0]})" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:startProcessInstance"/>
+			<camel:setHeader headerName="masterProcess">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="businessKey">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:process ref="startProcessInstanceProcessor"/>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getMyTasks"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="pricipal">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:process ref="taskQueryProcessor" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:getDepartmentTasks"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="department">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:process ref="taskQueryProcessor" />
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:completeTask" />
+			<camel:bean ref="taskService" method="complete(${body[0]})"/>
+			<camel:setBody>
+				<camel:constant>true</camel:constant>
+			</camel:setBody>
+		</camel:route>
+	</camel:routeContext>
+</beans>

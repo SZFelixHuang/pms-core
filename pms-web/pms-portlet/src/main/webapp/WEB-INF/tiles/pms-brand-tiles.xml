@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="brandTree" extends="pms.tiles">
+		<put-attribute name="title" value="Brand List" />
+		<put-attribute name="body" value="/pages/brand/brandTree.jsp" />
+	</definition>
+	<definition name="addBrandBasic" extends="pms.tiles">
+		<put-attribute name="title" value="Add Brand Basic Info" />
+		<put-attribute name="body" value="/pages/brand/brandBasicAdd.jsp" />
+	</definition>
+	<definition name="editBrandBasic" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Brand Basic Info" />
+		<put-attribute name="body" value="/pages/brand/brandBasicEdit.jsp" />
+	</definition>
+	<definition name="deleteBrandBasic" extends="pms.tiles">
+		<put-attribute name="title" value="Delete Brand Basic Info" />
+		<put-attribute name="body" value="/pages/brand/brandBasicDelete.jsp" />
+	</definition>
+	<definition name="brandDetailList" extends="pms.tiles">
+		<put-attribute name="title" value="Brand Detail List" />
+		<put-attribute name="body" value="/pages/brand/brandDetailList.jsp" />
+	</definition>
+	<definition name="addBrandDetail" extends="pms.tiles">
+		<put-attribute name="title" value="Add Brand Detail Info" />
+		<put-attribute name="body" value="/pages/brand/brandDetailAdd.jsp" />
+	</definition>
+	<definition name="editBrandDetail" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Brand Detail Info" />
+		<put-attribute name="body" value="/pages/brand/brandDetailEdit.jsp" />
+	</definition>
+	<definition name="lookUpBrand" extends="pms.tiles">
+		<put-attribute name="title" value="Brand Look Up" />
+		<put-attribute name="body" value="/pages/brand/brandLookUp.jsp" />
+	</definition>
+	<definition name="looUpModel" extends="pms.tiles">
+		<put-attribute name="title" value="Brand Model Look Up" />
+		<put-attribute name="body" value="/pages/brand/modelLookUp.jsp" />
+	</definition>
+	<definition name="lookUpDetail" extends="pms.tiles">
+		<put-attribute name="title" value="Brand Detail Look Up" />
+		<put-attribute name="body" value="/pages/brand/detailLookUp.jsp" />
+	</definition>
+</tiles-definitions>

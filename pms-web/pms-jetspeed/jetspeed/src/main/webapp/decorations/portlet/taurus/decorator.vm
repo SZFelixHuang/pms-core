@@ -1,0 +1,104 @@
+#*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*#
+
+#* ************************* READ ME *************************************
+This is the default template to be used for rendering decorations.  If you 
+find you cannot accomplish your design requirements by defining a custom
+style sheet for your decoration, you can define your own decorator.vm in 
+the root of your decortaion.  This will be used instead of the default.
+************************************************************************ *#
+
+#set($decoration = $f.decoration)
+#set($actions = $decoration.actions)
+
+<!-- Begin: Fragment: ${f.id} Decoration: ${decoration.Name} -->
+<script type="text/javascript">
+    function portletRefresh(obj)
+    {
+       var portletIframe = $(obj).parents("div.panel-heading:first").siblings("div.panel-body:first").find("iframe:first")[0];
+       if(portletIframe)
+       {
+	       $(portletIframe).attr("src", portletIframe.src);
+       }
+    }
+    window.observer = 
+    {
+    	subjects : new Array(),
+    	winRegister : function(win)
+    	{
+	    	this.subjects.push(win);	
+    	},
+    	change : function()
+    	{
+ 	   		for(var i = 0, flag = true, len = this.subjects.length; i < len; flag ? i++ : i)
+ 	   		{
+ 	   			var subject = this.subjects[i]; 
+		   		if(subject)
+		   		{
+			        flag = true;
+			        subject.scrollBar.autoAdjustForErrorMsgDisplay();
+	    		} 
+	    		else 
+	    		{
+			        this.subjects.splice(i,1);
+			        flag = false;
+			    }
+		   	}
+    	}
+    };
+    $(window).resize(function()
+    {
+     	window.observer.change();
+	});
+</script>
+<div id="${f.id}" class="panel panel-default ${decoration.baseCSSClass}">
+  #set($solo = $jetspeed.MappedWindowState.toString()=="solo")
+   #set($hidePortlet = $renderRequest.getAttribute("js_${jetspeed.CurrentFragment.Id}_HideDecorator")) 
+ #if (!$solo && !$hidePortlet)
+    <div class="panel-heading" >
+#if (!$f.isLocked())      
+     #set($_actions = $decoration.actions)  
+	 <div name="portlet-page-actions" class="pull-right PActionBar">
+	 	<table name="portlet-actions-table">
+    		<tr style="height: 18px;text-align: left;background: none;">
+    			<td style="border:none;padding:1.5px 0px;"><a name="portlet-setup-icon" style="text-decoration:none;" href="#"><span name="portlet-setup-icon-span" class="icon-cogs glyphicon-icon-style"></span></a></td>
+			 	<td style="border:none;padding:1.5px 0px;"><a name="portlet-refresh-icon" style="text-decoration:none;" href="#" onclick="portletRefresh(this);"><span class="icon-refresh" style="color: #606060;"></span></a></td>
+			    #foreach ($_action in $_actions)
+     			<td style="border:none;padding:1.5px 0px;"><a href="${_action.Action}" title="${_action.Name}" class="action portlet-action" #if($_action.target)target="$_action.target"#end><img src="$request.contextPath/${_action.link}" alt="${_action.Alt}" border="0" /></a></td>
+			    #end
+				#if ($jetspeed.isAjaxCustomizationEnabled())	    
+			    <td style="border:none;padding:1.5px 0px;"><span style='cursor: pointer; z-index: 1000;' id='jetspeed-close-${f.id}' title="close" class="portlet-action-close"><img src="${request.contextPath}/decorations/portlet/jetspeed/images/close.gif" alt="Close" border="0" /></span></td>
+				#end	
+			</tr>   
+		</table>     
+	 </div>
+#end	 
+      <div class="panel-title">	
+        #set ($ws=$jetspeed.MappedWindowState)
+        
+        $!jetspeed.getTitle($f)
+      </div>
+    </div>
+ #end    
+ #if (!$jetspeed.isHidden($f) && !$hidePortlet && $jetspeed.WindowState.toString() != "minimized")
+    <div class="panel-body">
+      $f.renderedContent
+    </div>
+  #end
+</div>
+
+<!-- END: Fragment: ${f.id} Decoration: ${decoration.Name} -->

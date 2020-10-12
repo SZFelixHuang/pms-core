@@ -1,0 +1,209 @@
+html, body, div.page, div.content {
+	height: 100%;
+	width: 100%;
+	padding: 0px;
+	background-color: #EEE;
+	overflow: hidden;
+}
+
+.customizedForm-tools {
+	background-color: rgb(46, 50, 54);
+	border-color: rgb(46, 50, 54);
+	border-style: solid;
+	height: 5%;
+	width: 100%;
+	position: relative;
+	float: left;
+}
+
+.customizedForm-title {
+	height: 50px;
+	line-height: 50px;
+	font-size: 20px;
+	display: inline-block;
+	margin-left: 20px;
+}
+
+.customizedForm-tools>.customizedForm-actions {
+	float: right;
+	margin-right: 20px;
+	display: inline;
+	height: 50px;
+	line-height: 50px;
+}
+
+.customizedForm-tools>.customizedForm-actions>a {
+	text-decoration: none;
+	color: #eee;
+}
+
+.customizedForm-tools>.customizedForm-actions>a>span {
+	margin-left: 20px;
+	font-size: 30px;
+	vertical-align: middle;
+}
+
+.customizedForm-tools>.customizedForm-actions>a>span:hover {
+	color: gray;
+	cursor: pointer;
+}
+
+.customizedForm-elements {
+	width: 13%;
+	height: 95%;
+	background: rgba(0, 0, 0, 0.5);
+	display: block;
+	overflow: auto;
+	float: left;
+}
+
+.customizedForm-elements>.customizedForm-element-type {
+	font-size: 20px;
+	margin-top: 10px;
+	margin-left: 15px;
+}
+
+.customizedForm-elements>.customizedForm-element {
+	padding: 20px;
+}
+
+.customizedForm-elements>.customizedForm-element>.element-template {
+	display: none;
+}
+
+.drag_basic {
+	float: right;
+	border-radius: 3px;
+	position: relative;
+	width: 60px;
+	height: 25px;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	display: inline-block;
+	line-height: 28px;
+	vertical-align: middle;
+	transform: translateY(-48%);
+	opacity: 1;
+	color: #eee;
+}
+
+.drag_basic>span {
+	position: relative;
+	top: 45%;
+	transform: translateY(-49%);
+	margin-right: 5px;
+}
+
+.drag_basic:hover {
+	cursor: pointer;
+	opacity: 0.5;
+}
+
+.drag {
+	background-color: rgb(46, 50, 54);
+}
+
+.delete {
+	background-color: #d9534f;
+}
+
+.customizedForm-container {
+	height: 95%;
+	display: block;
+	overflow: auto;
+	float: left;
+	background: #ccc;
+	padding: 15px;
+	width: 87%;
+	color: #333;
+}
+
+.customizedForm-container>.form-container {
+	border: 1px solid #eee;
+	border-radius: 4px;
+	min-height: 100%;
+	height: auto;
+	width: 100%;
+	display: block;
+}
+
+.customizedForm-container>.form-container>.form-container-title {
+	background-color: #F5F5F5;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px 0 4px 0;
+	color: #9DA0A4;
+	content: "Container";
+	font-size: 12px;
+	font-weight: bold;
+	padding: 3px 7px;
+	width: 100px;
+}
+
+.customizedForm-attribute {
+	width: 0%;
+	height: 100%;
+	float: left;
+	background: #ccc;
+	border-left: 2px solid #999999;
+	color: #333;
+	display: none;
+}
+
+.customizedForm-attribute>div.customizedForm-attribute-temp {
+	display: none;
+}
+
+.positionPreview {
+	width: 10px;
+	height: 50px;
+	display: inline-table;
+	padding: 0px 3px;
+	border-top: 2px solid #999999;
+	border-bottom: 2px solid #999999;
+}
+
+.positionPreview>div {
+	width: 100%;
+	height: 100%;
+	background: #999999;
+	display: table-cell;
+}
+
+.customizedForm-row {
+	min-height: 100px;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	margin: 15px;
+}
+
+.customizedForm-row>div>.customizedForm-row-label {
+	background-color: #F5F5F5;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px 0 4px 0;
+	color: #9DA0A4;
+	content: "Container";
+	font-size: 12px;
+	font-weight: bold;
+	padding: 3px 7px;
+	width: 80px;
+	display: inline-block;
+}
+
+.customizedForm-row>div>.customizedForm-row-actions {
+	display: inline-block;
+	float: right;
+	padding-top: 13px;
+}
+
+.customizedForm-container>.form-container div.fieldUnit:hover {
+	background: rgba(255, 255, 255, 0.3);
+}
+
+#deleteIcon4CustomizedField {
+	text-decoration: none;
+	position:absolute;
+	top: -10000px;
+	left:-10000px;
+	color: #AF2F2F;
+}

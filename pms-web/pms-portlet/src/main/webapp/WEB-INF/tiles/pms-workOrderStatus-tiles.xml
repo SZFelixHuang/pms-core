@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="workOrderStatusList" extends="pms.tiles">
+		<put-attribute name="title" value="Reference Work Order Status List" />
+		<put-attribute name="body" value="/pages/workOrderStatus/workOrderStatusList.jsp" />
+	</definition>
+	<definition name="addWorkOrderStatus" extends="pms.tiles">
+		<put-attribute name="title" value="Add Reference Work Order Status" />
+		<put-attribute name="body" value="/pages/workOrderStatus/workOrderStatusAdd.jsp" />
+	</definition>
+	<definition name="editWorkOrderStatus" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Reference Work Order Status" />
+		<put-attribute name="body" value="/pages/workOrderStatus/workOrderStatusEdit.jsp" />
+	</definition>
+</tiles-definitions>

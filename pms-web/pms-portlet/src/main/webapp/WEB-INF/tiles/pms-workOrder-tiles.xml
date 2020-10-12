@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="workOrderList" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order List" />
+		<put-attribute name="body" value="/pages/workOrder/workOrderList.jsp" />
+	</definition>
+	<definition name="selectWorkOrderType" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order List" />
+		<put-attribute name="body" value="/pages/workOrder/selectWorkOrderType.jsp" />
+	</definition>
+	<definition name="newWorkOrder" extends="pms.tiles">
+		<put-attribute name="title" value="New Work Order" />
+		<put-attribute name="body" value="/pages/workOrder/workOrderAdd.jsp" />
+	</definition>
+	<definition name="editWorkOrder" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Work Order" />
+		<put-attribute name="body" value="/pages/workOrder/workOrderEdit.jsp" />
+	</definition>
+	<definition name="serviceLookUp4WorkOrder" extends="pms.tiles">
+		<put-attribute name="title" value="Service Look Up" />
+		<put-attribute name="body" value="/pages/workOrder/serviceLookUp.jsp" />
+	</definition>
+	<definition name="vipLookUp4WorkOrder" extends="pms.tiles">
+		<put-attribute name="title" value="VIP Look Up" />
+		<put-attribute name="body" value="/pages/workOrder/vipLookUpList.jsp" />
+	</definition>
+	<definition name="carLookUp4WorkOrder" extends="pms.tiles">
+		<put-attribute name="title" value="Look Up Car List" />
+		<put-attribute name="body" value="/pages/workOrder/carLookUpList.jsp" />
+	</definition>
+	<definition name="materialLookUp4WorkOrder" extends="pms.tiles">
+		<put-attribute name="title" value="Look Up Material List" />
+		<put-attribute name="body" value="/pages/workOrder/materialLookUp.jsp" />
+	</definition>
+	<definition name="workOrderInfo" extends="pms.tiles">
+		<put-attribute name="title" value="Basic Work Order Information" />
+		<put-attribute name="body" value="/pages/workOrder/workOrderInfo.jsp" />
+	</definition>
+	<definition name="carOwnerInfo" extends="pms.tiles">
+		<put-attribute name="title" value="Car Owner Information" />
+		<put-attribute name="body" value="/pages/workOrder/carOwnerInfo.jsp" />
+	</definition>
+	<definition name="workOrderCarInfo" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order Car Information" />
+		<put-attribute name="body" value="/pages/workOrder/carInfo.jsp" />
+	</definition>
+	<definition name="workOrderServiceInfo" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order Services Information" />
+		<put-attribute name="body" value="/pages/workOrder/servicesInfo.jsp" />
+	</definition>
+	<definition name="workOrderMaterialConsumeInfo" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order Material Consumes Information" />
+		<put-attribute name="body" value="/pages/workOrder/materialConsumeInfo.jsp" />
+	</definition>
+	<definition name="workOrderCarAddress" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order Car Address Information" />
+		<put-attribute name="body" value="/pages/workOrder/carAddress.jsp" />
+	</definition>
+	<definition name="lookedUpServices" extends="pms.tiles">
+		<put-attribute name="title" value="Work Order Services Lookup" />
+		<put-attribute name="body" value="/pages/workOrder/lookedUpServices.jsp" />
+	</definition>
+</tiles-definitions>

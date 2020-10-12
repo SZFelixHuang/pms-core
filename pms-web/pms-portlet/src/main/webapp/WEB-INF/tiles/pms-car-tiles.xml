@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="carManagementList" extends="pms.tiles">
+		<put-attribute name="title" value="Car List" />
+		<put-attribute name="body" value="/pages/car/carList.jsp" />
+	</definition>
+
+	<definition name="carManagementEdit" extends="pms.tiles">
+		<put-attribute name="title" value="Edit Car Information" />
+		<put-attribute name="body" value="/pages/car/carEdit.jsp" />
+	</definition>
+
+	<definition name="carManagementAdd" extends="pms.tiles">
+		<put-attribute name="title" value="Add Car Information" />
+		<put-attribute name="body" value="/pages/car/carAdd.jsp" />
+	</definition>
+</tiles-definitions>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="cropImage" extends="pms.tiles">
+		<put-attribute name="title" value="Image Cropper" />
+		<put-attribute name="body" value="/pages/documentation/imageCropper.jsp" />
+	</definition>
+	<definition name="viewImage" extends="pms.tiles">
+		<put-attribute name="title" value="View Image" />
+		<put-attribute name="body" value="/pages/documentation/viewImage.jsp" />
+	</definition>
+</tiles-definitions>

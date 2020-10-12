@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/context  
+						http://www.springframework.org/schema/context/spring-context.xsd  
+						http://www.springframework.org/schema/beans  
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+						http://www.springframework.org/schema/tx  
+						http://www.springframework.org/schema/tx/spring-tx.xsd  
+						http://www.springframework.org/schema/jdbc  
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd  
+						http://www.springframework.org/schema/cache  
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd  
+						http://www.springframework.org/schema/aop  
+						http://www.springframework.org/schema/aop/spring-aop.xsd  
+						http://www.springframework.org/schema/util  
+						http://www.springframework.org/schema/util/spring-util.xsd
+						http://camel.apache.org/schema/spring
+						http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd">
+						
+	<camel:routeContext id="Routing-dailyService-Module" xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="direct:createDailyServices"/>
+			<camel:setHeader headerName="agency">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="workOrderId">
+				<camel:simple>${body[1]}</camel:simple>
+			</camel:setHeader>
+			<camel:setHeader headerName="dailyServices">
+				<camel:simple>${body[2]}</camel:simple>
+			</camel:setHeader>
+		 	<camel:setHeader headerName="serviceLoopSize">
+               	<camel:simple>${header.dailyServices.size}</camel:simple>
+           	</camel:setHeader>
+			<camel:loop>
+				<camel:header>serviceLoopSize</camel:header>
+            	<camel:setHeader headerName="currentService">
+                   	<camel:simple>${header.dailyServices[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+               	</camel:setHeader>
+               	<camel:transform>
+					<camel:javaScript>request.headers.get('currentService').agency = request.headers.get('agency')</camel:javaScript>
+				</camel:transform>	 
+               	<camel:transform>
+					<camel:javaScript>request.headers.get('currentService').workOrderId = request.headers.get('workOrderId')</camel:javaScript>
+				</camel:transform>	
+				<camel:setBody>
+					<camel:javaScript>[request.headers.get('currentService')]</camel:javaScript>
+				</camel:setBody>
+               	<camel:toD uri="direct:createDailyService"/>
+			</camel:loop>
+			<camel:setBody>
+         		<camel:simple>${header.dailyServices}</camel:simple>
+         	</camel:setBody>
+		</camel:route>
+		<camel:route>
+			<camel:from uri="direct:createDailyService"/>
+			<camel:setHeader headerName="dailyService">
+				<camel:simple>${body[0]}</camel:simple>
+			</camel:setHeader>
+			<camel:bean ref="dailyServiceDAO" method="saveOrUpdate(${header.dailyService})"/>
+			<camel:filter>
+				<camel:simple>${header.dailyService.materialConsumes} != null</camel:simple>
+				<camel:setHeader headerName="materialLoopSize">
+               		<camel:simple>${header.dailyService.materialConsumes.size}</camel:simple>
+           		</camel:setHeader>	
+           		<camel:loop>
+					<camel:header>materialLoopSize</camel:header>
+				 	<camel:setHeader headerName="currentMaterialConsume">
+                  			<camel:simple>${header.dailyService.materialConsumes[${exchangeProperty.CamelLoopIndex}]}</camel:simple>
+             		</camel:setHeader>
+             		<camel:filter>
+             			<camel:simple>${header.currentMaterialConsume.materialRepository} != null</camel:simple>
+	             		<camel:bean ref="materialConsumeDAO" method="consume(${header.dailyService.workOrderId},${header.dailyService.id}, ${header.currentMaterialConsume.materialRepository.id}, ${header.currentMaterialConsume.consumedAmount})"/>
+	              		<camel:bean ref="materialRepositoryDAO" method="consume(${header.currentMaterialConsume.materialRepository.id}, ${header.currentMaterialConsume.consumedAmount})"/>
+             		</camel:filter>
+             		<camel:filter>
+             			<camel:simple>${header.currentMaterialConsume.material} != null</camel:simple>
+             			<camel:bean ref="materialConsumeDAO" method="reference(${header.dailyService.workOrderId},${header.dailyService.id}, ${header.currentMaterialConsume.material.id}, ${header.currentMaterialConsume.consumedAmount})"/>
+             		</camel:filter>
+           		</camel:loop>
+         	</camel:filter>
+         	<camel:setBody>
+         		<camel:simple>${header.dailyService}</camel:simple>
+         	</camel:setBody>
+		</camel:route>
+	</camel:routeContext>
+</beans>
